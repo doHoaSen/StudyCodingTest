@@ -22,30 +22,45 @@ if not os.path.exists(ASSETS):
 # ---------------------------------------------------------
 def parse_log(out):
     commits = []
+    buffer = []
     for line in out:
-        if "|" not in line:
-            continue
-        ts, msg = line.split("|", 1)
-        date = datetime.datetime.fromtimestamp(int(ts)).date()
-        commits.append({"date": date, "msg": msg})
-    return commits
+        line = line.rstrip("\n")
+        if re.match(r"^\d+\|", line):  # 새로운 commit 시작 조건
+            if buffer:
+                commits.append(buffer)
+            buffer = [line]
+        else:
+            buffer.append(line)
+    if buffer:
+        commits.append(buffer)
+
+    parsed = []
+    for block in commits:
+        header = block[0]
+        ts, _ = header.split("|", 1)
+        body = "\n".join(block[1:])  # body 전체 결합
+        parsed.append({
+            "date": datetime.datetime.fromtimestamp(int(ts)).date(),
+            "msg": body
+        })
+    return parsed
 
 
 # ---------------------------------------------------------
-# 1) 최근 60일 commit (오늘, 이번 주, 히트맵용)
+# git log - 최근 60일
 # ---------------------------------------------------------
 def get_commits_recent():
     cmd = ["git", "log", "--since=60 days ago", "--pretty=%ct|%B"]
-    out = subprocess.check_output(cmd).decode("utf-8").strip().split("\n")
+    out = subprocess.check_output(cmd).decode("utf-8").splitlines()
     return parse_log(out)
 
 
 # ---------------------------------------------------------
-# 2) 전체 commit (누적 총합 계산용)
+# git log - 전체 기간
 # ---------------------------------------------------------
 def get_commits_all():
     cmd = ["git", "log", "--pretty=%ct|%B"]
-    out = subprocess.check_output(cmd).decode("utf-8").strip().split("\n")
+    out = subprocess.check_output(cmd).decode("utf-8").splitlines()
     return parse_log(out)
 
 
@@ -65,9 +80,9 @@ def parse_recent_info(commits):
         commit_date = c["date"]
         msg = c["msg"]
 
-        # 📌 여러 개의 "N문제"를 모두 합산
+        # 📌 여러 개의 "N문제" 모두 합산
         nums = re.findall(r"(\d+)문제", msg)
-        solved = sum(int(n) for n in nums) if nums else 0
+        solved = sum(int(n) for n in nums)
 
         if commit_date == today:
             today_solved += solved
@@ -81,7 +96,7 @@ def parse_recent_info(commits):
 
 
 # ---------------------------------------------------------
-# 전체 commit 기반 파싱 (누적 합계)
+# 전체 commit 기반 파싱 (누적 합계 + 카테고리)
 # ---------------------------------------------------------
 def parse_total_info(commits):
     total_solved = 0
@@ -90,17 +105,16 @@ def parse_total_info(commits):
     for c in commits:
         msg = c["msg"]
 
-        # 📌 전체 commit도 여러 "N문제" 합산
         nums = re.findall(r"(\d+)문제", msg)
-        solved = sum(int(n) for n in nums) if nums else 0
+        solved = sum(int(n) for n in nums)
         total_solved += solved
 
         # 카테고리 분류
         if "이코테" in msg:
             cat_count["이코테"] += solved
-        elif "프로그래머스" in msg or "programmers" in msg.lower():
+        if "프로그래머스" in msg or "programmers" in msg.lower():
             cat_count["프로그래머스"] += solved
-        elif "BOJ" in msg or "boj" in msg.lower():
+        if "BOJ" in msg.lower():
             cat_count["BOJ"] += solved
 
     return total_solved, cat_count
@@ -157,7 +171,6 @@ def generate_heatmap(path, heatmap):
         c = idx // rows
         v = heatmap.get(str(day), 0)
         tooltip = f"{day} — {v} solved"
-
         svg.append(
             f'<rect x="{c*(cell+gap)}" y="{r*(cell+gap)}" width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
             f'<title>{tooltip}</title></rect>'
