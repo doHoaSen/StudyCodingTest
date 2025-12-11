@@ -6,13 +6,13 @@
 <div align="center">
 
 ### 🔥 Today’s Activity
-<img src="https://img.shields.io/badge/Today_Solved-{{TODAY_SOLVED}}-orange?style=for-the-badge" />
+<img src="https://img.shields.io/badge/Today_Solved-0-orange?style=for-the-badge" />
 
 ### 🎯 Weekly Goal (10문제 기준)
-<img src="https://progress-bar.dev/{{WEEKLY_PROGRESS}}/?scale=10&width=300&color=blue&suffix=%2F10" />
+<img src="https://progress-bar.dev/0/?scale=10&width=300&color=blue&suffix=%2F10" />
 
 ### 🧮 Total Solved
-<img src="https://img.shields.io/badge/Total_Solved-{{TOTAL_SOLVED}}-40c463?style=for-the-badge" />
+<img src="https://img.shields.io/badge/Total_Solved-14-40c463?style=for-the-badge" />
 
 </div>
 
@@ -31,9 +31,9 @@
 
 | Category | Count |
 |---------|-------|
-| 🧊 이코테(Java) | **{{IKOTE_COUNT}}** |
-| 🚀 프로그래머스 Lv1 | **{{PROGRAMMERS_LV1_COUNT}}** |
-| 🧩 BOJ | **{{BOJ_COUNT}}** |
+| 🧊 이코테(Java) | **14** |
+| 🚀 프로그래머스 Lv1 | **0** |
+| 🧩 BOJ | **0** |
 
 ---
 
@@ -41,10 +41,10 @@
 
 | Date | Category | Problem |
 |------|----------|---------|
-{{RECENT_ACTIVITY_TABLE}}
+
 
 ---
 
 <p align="right">
-⏰ Last Update: <b>{{LAST_UPDATE}}</b>
+⏰ Last Update: <b>2025-12-11 13:15</b>
 </p>
