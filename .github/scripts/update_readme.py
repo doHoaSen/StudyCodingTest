@@ -34,7 +34,7 @@ def get_commits():
 
 
 # ---------------------------------------------------------
-# 2) Commit 파싱
+# 2) Commit 파싱 (카테고리 제거됨)
 # ---------------------------------------------------------
 def parse_commit_info(commits):
     today = datetime.date.today()
@@ -45,7 +45,6 @@ def parse_commit_info(commits):
     total_solved = 0
     WEEKLY_GOAL = 10
 
-    cat_count = {"이코테": 0, "프로그래머스": 0, "BOJ": 0}
     heatmap = defaultdict(int)
 
     for c in commits:
@@ -61,21 +60,13 @@ def parse_commit_info(commits):
             weekly_solved += solved
 
         total_solved += solved
-
-        if "이코테" in msg:
-            cat_count["이코테"] += solved
-        elif "프로그래머스" in msg:
-            cat_count["프로그래머스"] += solved
-        elif "BOJ" in msg or "boj" in msg.lower():
-            cat_count["BOJ"] += solved
-
         heatmap[str(commit_date)] += solved
 
-    return today_solved, weekly_solved, WEEKLY_GOAL, total_solved, cat_count, heatmap
+    return today_solved, weekly_solved, WEEKLY_GOAL, total_solved, heatmap
 
 
 # ---------------------------------------------------------
-# 3) Donut SVG 생성 (🔥 XML header + xmlns 추가됨)
+# 3) Donut SVG 생성
 # ---------------------------------------------------------
 def generate_donut(path, value, goal, label):
     percent = 0 if goal == 0 else min(value / goal, 1)
@@ -100,12 +91,11 @@ def generate_donut(path, value, goal, label):
 
 
 # ---------------------------------------------------------
-# 4) Heatmap SVG 생성 (🔥 XML header + xmlns 추가됨)
+# 4) Heatmap SVG 생성
 # ---------------------------------------------------------
 def generate_heatmap(path, heatmap):
     today = datetime.date.today()
     dates = [(today - datetime.timedelta(days=i)) for i in range(59, -1, -1)]
-    max_val = max(heatmap.values()) if heatmap else 1
 
     def color(v):
         if v == 0: return "#ebedf0"
@@ -143,20 +133,19 @@ def generate_heatmap(path, heatmap):
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(svg))
 
+
 # ---------------------------------------------------------
 # 실행
 # ---------------------------------------------------------
 commits = get_commits()
-today_solved, weekly_solved, weekly_goal, total_solved, cat_count, heatmap_data = parse_commit_info(commits)
+today_solved, weekly_solved, weekly_goal, total_solved, heatmap_data = parse_commit_info(commits)
 
+# Donut 생성
 generate_donut(os.path.join(ASSETS, "today.svg"), today_solved, 1, "solved")
 generate_donut(os.path.join(ASSETS, "weekly.svg"), weekly_solved, weekly_goal, "solved")
 generate_donut(os.path.join(ASSETS, "total.svg"), total_solved, max(total_solved, 1), "solved")
 
-generate_donut(os.path.join(ASSETS, "ikote.svg"), cat_count["이코테"], max(cat_count["이코테"], 1), "")
-generate_donut(os.path.join(ASSETS, "programmers.svg"), cat_count["프로그래머스"], max(cat_count["프로그래머스"], 1), "")
-generate_donut(os.path.join(ASSETS, "boj.svg"), cat_count["BOJ"], max(cat_count["BOJ"], 1), "")
-
+# Heatmap 생성
 generate_heatmap(os.path.join(ASSETS, "heatmap.svg"), heatmap_data)
 
 # README 업데이트
