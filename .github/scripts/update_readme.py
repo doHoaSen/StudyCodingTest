@@ -1,144 +1,174 @@
-import os
-import re
 import json
+import os
 import datetime
-import pytz
 import matplotlib.pyplot as plt
-from matplotlib import rcParams
+import matplotlib.font_manager as fm
+from pytz import timezone
+import math
 
-# 폰트 설정 (GitHub Actions용)
-rcParams["font.family"] = "DejaVu Sans"
+# ---------------------------
+# PATH SETTINGS
+# ---------------------------
 
-README_TEMPLATE = "README.md"
-HISTORY_FILE = "solve_history.json"
-ASSETS_DIR = "assets"
+ROOT = os.getcwd()
+TEMPLATE_PATH = ".github/scripts/template_readme.md"
+OUTPUT_README = "README.md"
 
-os.makedirs(ASSETS_DIR, exist_ok=True)
+ASSETS = "./assets"
+TREND_IMAGE_PATH = f"{ASSETS}/trend.png"
 
-# ---------------- 파일 카운트 ----------------
-def count_java(path):
-    return sum(
-        1 for _, _, files in os.walk(path)
-        for f in files if f.endswith(".java")
-    ) if os.path.exists(path) else 0
+DONUT_FILES = {
+    "ikote": f"{ASSETS}/ikote.svg",
+    "programmers": f"{ASSETS}/programmers.svg",
+    "boj": f"{ASSETS}/boj.svg",
+    "today": f"{ASSETS}/today.svg",
+    "weekly": f"{ASSETS}/weekly.svg",
+    "total": f"{ASSETS}/total.svg",
+}
+
+# ---------------------------
+# LOAD FONTS (KOREAN FIX)
+# ---------------------------
+plt.rcParams['axes.unicode_minus'] = False
+
+font_list = [
+    "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
+    "/usr/share/fonts/truetype/nanum/NanumGothicLight.ttf",
+    "/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf"
+]
+
+for font in font_list:
+    if os.path.exists(font):
+        fm.fontManager.addfont(font)
+
+plt.rc('font', family='NanumGothic')
+
+# ---------------------------
+# READ solve_history.json
+# ---------------------------
+
+with open("solve_history.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+
+# 최근 7일 기록
+today = datetime.datetime.now(timezone("Asia/Seoul")).date()
+
+daily_summary = {}
+category_count = {"ikote": 0, "programmers": 0, "boj": 0}
+
+recent_activity_rows = []
+trend_dates = []
+trend_counts = []
+
+total_solved = 0
+
+for d in data:
+    date = datetime.datetime.strptime(d["date"], "%Y-%m-%d").date()
+
+    # 카테고리 카운트
+    category = d.get("category", "").lower()
+    if "이코테" in category:
+        category_count["ikote"] += 1
+    elif "프로그래머스" in category:
+        category_count["programmers"] += 1
+    elif "boj" in category:
+        category_count["boj"] += 1
+
+    total_solved += 1
+
+    # 최근 7일 누적
+    if (today - date).days <= 6:
+        trend_dates.append(str(date))
+        trend_counts.append(total_solved)
+
+    # 최근 활동 테이블
+    if (today - date).days <= 6:
+        for p in d["problems"]:
+            recent_activity_rows.append(f"| {date} | {d['category']} | {p} |")
+
+# ---------------------------
+# TODAY & WEEKLY CALC
+# ---------------------------
+
+today_solved = sum(1 for d in data if d["date"] == str(today))
+
+week_start = today - datetime.timedelta(days=today.weekday())
+weekly_solved = sum(1 for d in data if week_start <= datetime.datetime.strptime(d["date"], "%Y-%m-%d").date() <= today)
+
+# ---------------------------
+# DRAW DONUT CHART FUNCTION
+# ---------------------------
+
+def draw_donut(value, total, outfile):
+    if total == 0:
+        percent = 0
+    else:
+        percent = round((value / total) * 100)
+
+    # Light Blue theme
+    main_color = "#4d8af0"
+    bg_color = "#e6e6e6"
+
+    fig, ax = plt.subplots(figsize=(2.2, 2.2))
+    ax.pie(
+        [percent, 100 - percent],
+        colors=[main_color, bg_color],
+        startangle=90,
+        wedgeprops={'width': 0.28, 'edgecolor': 'white'}
+    )
+    ax.text(0, -0.05, f"{percent}%", ha='center', fontsize=13, color=main_color)
+    plt.axis("equal")
+
+    plt.savefig(outfile, transparent=True)
+    plt.close()
 
 
-ikote = count_java("src/이코테_자바")
-programmers = count_java("src/programmers")
-boj = count_java("src/BOJ")
+# ---------------------------
+# DRAW ALL DONUTS
+# ---------------------------
 
-total = ikote + programmers + boj
+draw_donut(today_solved, 1, DONUT_FILES["today"])
+draw_donut(weekly_solved, 10, DONUT_FILES["weekly"])
+draw_donut(total_solved, 500, DONUT_FILES["total"])
 
-# ---------------- 날짜 ----------------
-today = datetime.datetime.now(pytz.timezone("Asia/Seoul")).strftime("%Y-%m-%d")
+# category donut
+total_category_sum = sum(category_count.values())
+for key, file in DONUT_FILES.items():
+    if key in ["today", "weekly", "total"]:
+        continue
+for k in ["ikote", "programmers", "boj"]:
+    draw_donut(category_count[k], total_category_sum, DONUT_FILES[k])
 
-# ---------------- Commit 분석 ----------------
-def get_recent_activity(days=7):
-    cmd = f'git log --since="{days} days ago" --pretty=format:"%H|||%ad|||%s" --date=short'
-    logs = os.popen(cmd).read().strip().split("\n")
+# ---------------------------
+# TREND GRAPH
+# ---------------------------
 
-    rows = ""
+if trend_dates:
+    fig, ax = plt.subplots(figsize=(6, 3))
+    ax.plot(trend_dates, trend_counts, marker="o", color="#4d8af0")
 
-    for entry in logs:
-        if not entry.strip():
-            continue
+    plt.xticks(rotation=45)
+    ax.set_title("최근 7일 문제 풀이 추세")
+    ax.set_ylabel("누적 문제 수")
 
-        commit, date, msg = entry.split("|||")
+    plt.tight_layout()
+    plt.savefig(TREND_IMAGE_PATH, dpi=200)
+    plt.close()
 
-        # commit message 예시:
-        # 251210 프로그래머스: lv.1 3문제
-        # - 크레인 인형뽑기 게임
-        category = ""
-        if "프로그래머스" in msg:
-            category = "프로그래머스"
-        elif "이코테" in msg:
-            category = "이코테"
-        elif "BOJ" in msg:
-            category = "BOJ"
-        else:
-            continue
+# ---------------------------
+# TEMPLATE → README
+# ---------------------------
 
-        detail = os.popen(f"git show {commit}").read()
-        problems = re.findall(r"- (.+)", detail)
+with open(TEMPLATE_PATH, "r", encoding="utf-8") as f:
+    template = f.read()
 
-        for p in problems:
-            rows += f"| {date} | {category} | {p.strip()} |\n"
+final_md = template.replace("{{TODAY_SOLVED}}", str(today_solved)) \
+    .replace("{{WEEKLY_SOLVED}}", str(weekly_solved)) \
+    .replace("{{TOTAL_SOLVED}}", str(total_solved)) \
+    .replace("{{RECENT_ACTIVITY_TABLE}}", "\n".join(recent_activity_rows)) \
+    .replace("{{LAST_UPDATE}}", str(today))
 
-    return rows
+with open(OUTPUT_README, "w", encoding="utf-8") as f:
+    f.write(final_md)
 
-
-recent_table = get_recent_activity(7)
-
-# ---------------- 누적 기록 JSON ----------------
-if os.path.exists(HISTORY_FILE):
-    with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-        history = json.load(f)
-else:
-    history = {}
-
-history[today] = total
-with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-    json.dump(history, f, ensure_ascii=False, indent=2)
-
-# ---------------- 추세 그래프 ----------------
-dates = sorted(history.keys())
-values = [history[d] for d in dates]
-
-plt.figure(figsize=(7,4))
-plt.plot(dates, values, marker="o", color="#4ea5ff")
-plt.title("최근 7일 누적 문제 그래프")
-plt.xlabel("날짜")
-plt.ylabel("누적 문제 수")
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.savefig(f"{ASSETS_DIR}/trend.png", dpi=200)
-plt.close()
-
-# ---------------- Donut Chart 생성 ----------------
-def donut_svg(filename, percent):
-    svg = f"""
-<svg width="140" height="140" viewBox="0 0 36 36">
-  <path d="M18 2
-           a 16 16 0 1 1 0 32
-           a 16 16 0 1 1 0 -32"
-        fill="none"
-        stroke="#eee"
-        stroke-width="4"/>
-  <path d="M18 2
-           a 16 16 0 1 1 0 32"
-        fill="none"
-        stroke="#4ea5ff"
-        stroke-width="4"
-        stroke-dasharray="{percent}, 100"/>
-  <text x="18" y="20" font-size="8" text-anchor="middle" fill="#4ea5ff">{percent}%</text>
-</svg>
-"""
-    with open(f"{ASSETS_DIR}/{filename}", "w", encoding="utf-8") as f:
-        f.write(svg)
-
-
-# 비율 계산
-ikote_rate = round((ikote / total) * 100) if total else 0
-programmers_rate = round((programmers / total) * 100) if total else 0
-boj_rate = round((boj / total) * 100) if total else 0
-
-donut_svg("category_ikote.svg", ikote_rate)
-donut_svg("category_programmers.svg", programmers_rate)
-donut_svg("category_boj.svg", boj_rate)
-
-# 기본 통계 SVG (오늘/주간/누적)
-donut_svg("today.svg", 0)
-donut_svg("weekly.svg", 0)
-donut_svg("total.svg", round((total / 500) * 100))
-
-# ---------------- README 업데이트 ----------------
-with open(README_TEMPLATE, "r", encoding="utf-8") as f:
-    readme = f.read()
-
-updated = readme.replace("{{RECENT_ACTIVITY_TABLE}}", recent_table)\
-                .replace("{{LAST_UPDATE}}", datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
-
-with open("README.md", "w", encoding="utf-8") as f:
-    f.write(updated)
-
-print("README updated!")
+print("README updated.")
