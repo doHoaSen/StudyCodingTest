@@ -6,31 +6,36 @@
 
 ## 📌 주요 통계 대시보드
 
-<table>
+<table align="center" border="0" style="border-collapse: collapse; text-align:center;">
 <tr>
-<td align="center">
+
+<td style="border:0; padding:20px">
 
 ### 🔥 오늘 푼 문제
 {{TODAY_COUNT}} 문제  
+<br>
 <img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/today.svg" width="120"/>
 
 </td>
 
-<td align="center">
+<td style="border:0; padding:20px">
 
 ### 🎯 이번 주 목표 ({{WEEKLY_GOAL}}문제)
 {{WEEKLY_COUNT}} / {{WEEKLY_GOAL}}  
+<br>
 <img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/weekly.svg" width="120"/>
 
 </td>
 
-<td align="center">
+<td style="border:0; padding:20px">
 
 ### 📚 누적 해결 문제
 총 {{TOTAL_SOLVED}} 문제  
+<br>
 <img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/total.svg" width="120"/>
 
 </td>
+
 </tr>
 </table>
 
@@ -38,25 +43,27 @@
 
 ## 📊 카테고리별 상세 그래프
 
-<table>
+<table align="center" border="0" style="border-collapse: collapse; text-align:center;">
 <tr>
-<td align="center">
+
+<td style="border:0; padding:20px">
 이코테  
 <br>
 <img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/ikote.svg" width="120"/>
 </td>
 
-<td align="center">
+<td style="border:0; padding:20px">
 프로그래머스  
 <br>
 <img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/programmers.svg" width="120"/>
 </td>
 
-<td align="center">
+<td style="border:0; padding:20px">
 BOJ  
 <br>
 <img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/boj.svg" width="120"/>
 </td>
+
 </tr>
 </table>
 
@@ -64,7 +71,9 @@ BOJ
 
 ## 🔥 최근 60일 Heatmap
 
-<img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/heatmap.svg"/>
+<p align="center">
+<img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/heatmap.svg" width="600"/>
+</p>
 
 ---
 
