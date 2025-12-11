@@ -5,56 +5,38 @@
 
 ## 🟦 주요 통계 대시보드
 
-<table width="100%">
+<table align="center">
 <tr>
 
-<td align="center" width="33%">
-
-### 🔥 오늘 푼 문제
-**0 문제**  
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/today.svg" width="180"/>
-
+<!-- 오늘 푼 문제 -->
+<td align="center" width="25%">
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/today.svg" width="160"/>
+<br/>
+<strong>0 문제</strong>
+<br/>오늘 푼 문제
 </td>
 
-<td align="center" width="33%">
-
-### 🎯 이번 주 목표
-**0 / 10 문제**  
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/weekly.svg" width="180"/>
-
+<!-- 이번 주 목표 -->
+<td align="center" width="25%">
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/weekly.svg" width="160"/>
+<br/>
+<strong>0 / 10 문제</strong>
+<br/>이번 주 목표
 </td>
 
-<td align="center" width="33%">
-
-### 📚 누적 해결 문제
-**총 50 문제**  
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/total.svg" width="180"/>
-
+<!-- 누적 해결 -->
+<td align="center" width="25%">
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/total.svg" width="160"/>
+<br/>
+<strong>50 문제</strong>
+<br/>누적 해결
 </td>
 
-</tr>
-
-<tr>
-
-<td align="center" width="33%">
-
-### 📘 이코테
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/ikote.svg" width="180"/>
-
-</td>
-
-<td align="center" width="33%">
-
-### 🚀 프로그래머스
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/programmers.svg" width="180"/>
-
-</td>
-
-<td align="center" width="33%">
-
-### 🟢 BOJ
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/boj.svg" width="180"/>
-
+<!-- 카테고리별 비율 -->
+<td align="center" width="25%">
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/category_total.svg" width="160"/>
+<br/>
+<strong>카테고리 비율</strong>
 </td>
 
 </tr>
@@ -62,21 +44,25 @@
 
 ---
 
-## 📈 최근 7일 문제 풀이 추세
+## 📂 카테고리별 상세 그래프
+
 <p align="center">
-  <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/trend.png" width="650"/>
+  <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/category_ikote.svg" width="170"/>
+  <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/category_programmers.svg" width="170"/>
+  <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/category_boj.svg" width="170"/>
 </p>
 
 ---
 
-## 🕒 최근 7일 활동 내역
+## 🔥 최근 60일 풀이 Heatmap
 
-| 날짜 | 카테고리 | 문제 |
-|------|----------|------|
-
+<p align="center">
+  <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/heatmap.svg" width="750"/>
+</p>
 
 ---
 
-<br>
+<br/>
 
-⏰ **최근 업데이트:** 2025-12-11 15:17
+⏰ **최근 업데이트:** 2025-12-11 15:24
+
