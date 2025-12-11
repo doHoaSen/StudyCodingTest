@@ -1,8 +1,8 @@
 
 <svg width="300" height="26">
-  <rect x="0" y="10" width="300" height="10" fill="#ddd" rx="5"/>
-  <rect x="0" y="10" width="300" height="10" fill="#4c6ef5" rx="5"/>
-  <text x="150" y="9" text-anchor="middle" font-size="12" fill="#555">
-    12/10 (100%)
+  <rect x="0" y="10" width="300" height="10" fill="#e0e0e0" rx="5"/>
+  <rect x="0" y="10" width="330" height="10" fill="#4c6ef5" rx="5"/>
+  <text x="150" y="9" font-size="12" text-anchor="middle" fill="#555">
+    11 / 10 (110%)
   </text>
 </svg>
