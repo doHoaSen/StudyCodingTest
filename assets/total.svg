@@ -1,8 +1,6 @@
 
-<svg width="300" height="26">
-  <rect x="0" y="10" width="300" height="10" fill="#e0e0e0" rx="5"/>
-  <rect x="0" y="10" width="30" height="10" fill="#40c463" rx="5"/>
-  <text x="150" y="9" font-size="12" text-anchor="middle" fill="#555">
-    50 / 500 (10%)
-  </text>
+<svg width="260" height="40" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="18" width="240" height="10" rx="5" fill="#E6ECF5"/>
+  <rect x="10" y="18" width="24" height="10" rx="5" fill="#8AB6F9"/>
+  <text x="130" y="15" font-size="12" text-anchor="middle" fill="#333">50 / 500 (10%)</text>
 </svg>

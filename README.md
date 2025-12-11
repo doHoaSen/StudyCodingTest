@@ -13,7 +13,7 @@
 <div align="center">
 
 ### 🔥 오늘 푼 문제
-**{{TODAY_SOLVED}} 문제**
+**0 문제**
 
 <img src="./assets/today.svg" width="260"/>
 
@@ -25,7 +25,7 @@
 <div align="center">
 
 ### 🎯 이번 주 목표 (10문제)
-**{{WEEKLY_SOLVED}} / 10 문제**
+**0 / 10 문제**
 
 <img src="./assets/weekly.svg" width="260"/>
 
@@ -39,7 +39,7 @@
 <div align="center">
 
 ### 📚 누적 해결 문제 수
-**총 {{TOTAL_SOLVED}} 문제**
+**총 50 문제**
 
 <img src="./assets/total.svg" width="260"/>
 
@@ -54,9 +54,9 @@
 
 | 카테고리 | 해결 |
 |---------|------|
-| 📘 이코테(Java) | **{{IKOTE_COUNT}}** |
-| 🚀 프로그래머스 | **{{PROGRAMMERS_COUNT}}** |
-| 🟢 BOJ | **{{BOJ_COUNT}}** |
+| 📘 이코테(Java) | **14** |
+| 🚀 프로그래머스 | **36** |
+| 🟢 BOJ | **0** |
 
 </div>
 </td>
@@ -79,10 +79,10 @@
 
 | 날짜 | 카테고리 | 문제명 |
 |------|----------|---------|
-{{RECENT_ACTIVITY_TABLE}}
+
 
 ---
 
 <br>
 
-⏰ **최근 업데이트:** {{LAST_UPDATE}}
+⏰ **최근 업데이트:** 2025-12-11 14:29
