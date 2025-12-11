@@ -12,7 +12,7 @@
 
 ### 🔥 오늘 푼 문제
 3 문제  
-<img src="./assets/today.svg" width="120"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/today.svg?raw=1" width="120"/>
 
 </td>
 
@@ -20,7 +20,7 @@
 
 ### 🎯 이번 주 목표 (10문제)
 10 / 10  
-<img src="./assets/weekly.svg" width="120"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/weekly.svg?raw=1" width="120"/>
 
 </td>
 
@@ -28,7 +28,7 @@
 
 ### 📚 누적 해결 문제
 총 36 문제  
-<img src="./assets/total.svg" width="120"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/total.svg?raw=1" width="120"/>
 
 </td>
 </tr>
@@ -37,33 +37,37 @@
 ---
 
 ## 📊 카테고리별 상세 그래프
+
 <table>
 <tr>
 <td align="center">
 이코테  
 <br>
-<img src="./assets/ikote.svg" width="130"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/ikote.svg?raw=1" width="120"/>
 </td>
 
 <td align="center">
 프로그래머스  
 <br>
-<img src="./assets/programmers.svg" width="130"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/programmers.svg?raw=1" width="120"/>
 </td>
 
 <td align="center">
 BOJ  
 <br>
-<img src="./assets/boj.svg" width="130"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/boj.svg?raw=1" width="120"/>
 </td>
 </tr>
 </table>
 
 ---
 
-## 🔥 최근 60일 Heatmap
-<img src="./assets/heatmap.svg"/>
+## 🔥 최근 60일 풀이 Heatmap
+
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/heatmap.svg?raw=1"/>
 
 ---
 
-⏰ 최근 업데이트: **2025-12-11 07:00**
+<br>
+
+⏰ 최근 업데이트: **2025-12-11 16:04**
