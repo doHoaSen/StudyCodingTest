@@ -1,8 +1,8 @@
-
-<svg width="160" height="160">
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="160" height="160" xmlns="http://www.w3.org/2000/svg">
   <circle cx="80" cy="80" r="40" stroke="#e5e7eb" stroke-width="12" fill="none"/>
-  <circle cx="80" cy="80" r="40"
-    stroke="#4aa3ff" stroke-width="12" fill="none"
+  <circle cx="80" cy="80" r="40" stroke="#4aa3ff" stroke-width="12"
+    fill="none"
     stroke-dasharray="0.0 251.32741228718345"
     transform="rotate(-90 80 80)"
     stroke-linecap="round"/>
