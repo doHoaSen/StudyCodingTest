@@ -1,4 +1,4 @@
-name: Update Dashboard
+name: Update README Dashboard
 
 permissions:
   contents: write
@@ -21,20 +21,21 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y fonts-nanum
-          fc-cache -fv
-          pip install pytz matplotlib
+          pip install matplotlib pytz
 
-      - name: Run Script
+      - name: Install Korean Font
+        run: |
+          sudo apt-get install -y fonts-nanum
+
+      - name: Run Update Script
         run: python .github/scripts/update_readme.py
 
-      - name: Commit Changes
+      - name: Commit & Push
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add README.md solve_history.json assets/
-          git commit -m "Dashboard auto-update" || echo "No changes"
+          git add README.md assets/*.svg assets/*.png solve_history.json
+          git commit -m "Auto-update dashboard" || echo "No changes"
           git push

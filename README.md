@@ -3,61 +3,47 @@
 
 ---
 
-## 🟦 주요 통계 한눈에 보기
+## 🟦 주요 통계 대시보드
 
-<div align="center">
-
-<table width="100%">
+<table>
 <tr>
 
-<td width="50%" align="center" style="vertical-align:top; padding:10px;">
+<td align="center" width="50%">
 
 ### 🔥 오늘 푼 문제
-**0 문제**  
-<img src="./assets/today.svg" width="260"/>
+<img src="./assets/today.svg" width="180"/>
 
 </td>
 
-<td width="50%" align="center" style="vertical-align:top; padding:10px;">
+<td align="center" width="50%">
 
 ### 🎯 이번 주 목표 (10문제)
-**0 / 10 문제**  
-<img src="./assets/weekly.svg" width="260"/>
+<img src="./assets/weekly.svg" width="180"/>
 
 </td>
-
 </tr>
-<tr>
 
-<td width="50%" align="center" style="vertical-align:top; padding:10px;">
+<tr>
+<td align="center" width="50%">
 
 ### 📚 누적 해결 문제 수
-**총 50 문제**  
-<img src="./assets/total.svg" width="260"/>
+<img src="./assets/total.svg" width="180"/>
 
 </td>
 
-<td width="50%" align="center" style="vertical-align:top; padding:10px;">
+<td align="center" width="50%">
 
-### 📂 카테고리별 문제 풀이 현황
-
-| 카테고리 | 해결 |
-|---------|------|
-| 📘 이코테(Java) | **14** |
-| 🚀 프로그래머스 | **36** |
-| 🟢 BOJ | **0** |
+### 📂 카테고리별 해결 비율
+<img src="./assets/categories.svg" width="180"/>
 
 </td>
-
 </tr>
-</table>
 
-</div>
+</table>
 
 ---
 
 ## 📈 문제 풀이 추세 그래프
-
 <p align="center">
   <img src="./assets/trend.png" width="650"/>
 </p>
@@ -68,10 +54,9 @@
 
 | 날짜 | 카테고리 | 문제명 |
 |------|----------|---------|
-
+{{RECENT_ACTIVITY_TABLE}}
 
 ---
 
-<br>
+⏰ 마지막 업데이트: {{LAST_UPDATE}}
 
-⏰ **최근 업데이트:** 2025-12-11 14:33
