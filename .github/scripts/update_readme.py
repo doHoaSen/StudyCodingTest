@@ -105,7 +105,6 @@ def generate_donut(path, value, goal, label):
 def generate_heatmap(path, heatmap):
     today = datetime.date.today()
     dates = [(today - datetime.timedelta(days=i)) for i in range(59, -1, -1)]
-
     max_val = max(heatmap.values()) if heatmap else 1
 
     def color(v):
@@ -115,28 +114,34 @@ def generate_heatmap(path, heatmap):
         if v < 10: return "#239a3b"
         return "#196127"
 
-    cell = 18
+    cell = 14
     gap = 4
     cols = 10
-    rows = 6
+    rows = 7
 
     svg_w = cols * (cell + gap)
     svg_h = rows * (cell + gap)
 
-    svg = f'<?xml version="1.0" encoding="UTF-8"?>\n'
-    svg += f'<svg width="{svg_w}" height="{svg_h}" xmlns="http://www.w3.org/2000/svg">'
+    svg = [f'<svg width="{svg_w}" height="{svg_h}" xmlns="http://www.w3.org/2000/svg">']
 
-    for idx, d in enumerate(dates):
+    for idx, day in enumerate(dates):
         r = idx % rows
         c = idx // rows
-        v = heatmap.get(str(d), 0)
-        svg += f'<rect x="{c * (cell + gap)}" y="{r * (cell + gap)}" width="{cell}" height="{cell}" fill="{color(v)}" rx="3"/>'
 
-    svg += "</svg>"
+        v = heatmap.get(str(day), 0)
+        fill = color(v)
+        tooltip = f"{day} — {v} solved"
+
+        svg.append(
+            f'<rect x="{c * (cell + gap)}" y="{r * (cell + gap)}" '
+            f'width="{cell}" height="{cell}" rx="3" fill="{fill}">'
+            f'<title>{tooltip}</title></rect>'
+        )
+
+    svg.append("</svg>")
 
     with open(path, "w", encoding="utf-8") as f:
-        f.write(svg)
-
+        f.write("\n".join(svg))
 
 # ---------------------------------------------------------
 # 실행
