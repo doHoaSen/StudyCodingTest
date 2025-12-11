@@ -5,69 +5,58 @@
 
 ## 🟦 주요 통계 한눈에 보기
 
-<table>
+<div align="center">
+
+<table width="100%">
 <tr>
 
-<!-- 오늘 푼 문제 -->
-<td width="50%" align="center">
-<div align="center">
+<td width="50%" align="center" style="vertical-align:top; padding:10px;">
 
 ### 🔥 오늘 푼 문제
-**0 문제**
-
+**{{TODAY_SOLVED}} 문제**  
 <img src="./assets/today.svg" width="260"/>
 
-</div>
 </td>
 
-<!-- 이번 주 목표 -->
-<td width="50%" align="center">
-<div align="center">
+<td width="50%" align="center" style="vertical-align:top; padding:10px;">
 
 ### 🎯 이번 주 목표 (10문제)
-**0 / 10 문제**
-
+**{{WEEKLY_SOLVED}} / 10 문제**  
 <img src="./assets/weekly.svg" width="260"/>
 
-</div>
 </td>
 
-</tr><tr>
+</tr>
+<tr>
 
-<!-- 누적 해결 -->
-<td width="50%" align="center">
-<div align="center">
+<td width="50%" align="center" style="vertical-align:top; padding:10px;">
 
 ### 📚 누적 해결 문제 수
-**총 50 문제**
-
+**총 {{TOTAL_SOLVED}} 문제**  
 <img src="./assets/total.svg" width="260"/>
 
-</div>
 </td>
 
-<!-- 카테고리별 -->
-<td width="50%" align="center">
-<div align="center">
+<td width="50%" align="center" style="vertical-align:top; padding:10px;">
 
 ### 📂 카테고리별 문제 풀이 현황
 
 | 카테고리 | 해결 |
 |---------|------|
-| 📘 이코테(Java) | **14** |
-| 🚀 프로그래머스 | **36** |
-| 🟢 BOJ | **0** |
+| 📘 이코테(Java) | **{{IKOTE_COUNT}}** |
+| 🚀 프로그래머스 | **{{PROGRAMMERS_COUNT}}** |
+| 🟢 BOJ | **{{BOJ_COUNT}}** |
 
-</div>
 </td>
 
 </tr>
 </table>
 
+</div>
+
 ---
 
 ## 📈 문제 풀이 추세 그래프
-> 최근 7일 누적 문제 풀이 변화입니다.
 
 <p align="center">
   <img src="./assets/trend.png" width="650"/>
@@ -79,10 +68,10 @@
 
 | 날짜 | 카테고리 | 문제명 |
 |------|----------|---------|
-
+{{RECENT_ACTIVITY_TABLE}}
 
 ---
 
 <br>
 
-⏰ **최근 업데이트:** 2025-12-11 14:29
+⏰ **최근 업데이트:** {{LAST_UPDATE}}
