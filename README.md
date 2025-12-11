@@ -11,7 +11,7 @@
 <td width="50%" align="center">
 
 ### 🔥 오늘 푼 문제
-**{{TODAY_SOLVED}} 문제**  
+**0 문제**  
 <img src="./assets/today.svg" width="240"/>
 
 </td>
@@ -19,7 +19,7 @@
 <td width="50%" align="center">
 
 ### 🎯 이번 주 목표 (10문제)
-**{{WEEKLY_PROGRESS}} / 10 문제**  
+**10 / 10 문제**  
 <img src="./assets/weekly.svg" width="240"/>
 
 </td>
@@ -30,7 +30,7 @@
 <td width="50%" align="center">
 
 ### 📚 누적 해결 문제 수
-**총 {{TOTAL_SOLVED}} 문제**  
+**총 50 문제**  
 <img src="./assets/total.svg" width="240"/>
 
 </td>
@@ -63,10 +63,10 @@
 
 | 날짜 | 카테고리 | 문제명 |
 |------|----------|---------|
-{{RECENT_ACTIVITY_TABLE}}
+
 
 ---
 
 <br>
 
-⏰ **최근 업데이트:** {{LAST_UPDATE}}
+⏰ **최근 업데이트:** 2025-12-11 14:55
