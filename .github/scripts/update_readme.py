@@ -8,100 +8,98 @@ from matplotlib import font_manager
 
 README_TEMPLATE = "README.md"
 HISTORY_FILE = "solve_history.json"
-ASSETS = "assets"
-TREND_IMG = f"{ASSETS}/trend.png"
-os.makedirs(ASSETS, exist_ok=True)
+ASSETS_DIR = "assets"
 
-# 한글 폰트 설정
-font_manager.fontManager.addfont("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")
-plt.rc("font", family="DejaVu Sans")
+TODAY_SVG = f"{ASSETS_DIR}/today.svg"
+WEEKLY_SVG = f"{ASSETS_DIR}/weekly.svg"
+TOTAL_SVG = f"{ASSETS_DIR}/total.svg"
+TREND_IMAGE_PATH = f"{ASSETS_DIR}/trend.png"
+
+os.makedirs(ASSETS_DIR, exist_ok=True)
+
+# ----------------------------
+# 0. Install Korean Font for Matplotlib
+# ----------------------------
+font_path = "/usr/share/fonts/truetype/nanum/NanumGothic.ttf"
+if not os.path.exists(font_path):
+    os.system("sudo apt-get update")
+    os.system("sudo apt-get install -y fonts-nanum")
+
+plt.rc("font", family="NanumGothic")
+
+# ----------------------------
+# Count Java files
+# ----------------------------
+def count_java(path):
+    if not os.path.exists(path):
+        return 0
+    return sum(1 for _, _, files in os.walk(path) for f in files if f.endswith(".java"))
 
 
-# --------------------------------
-# 유틸: 자바 파일 개수
-# --------------------------------
-def count_java_files(path):
-    total = 0
-    for root, _, files in os.walk(path):
-        total += sum(1 for f in files if f.endswith(".java"))
-    return total
+ikote_count = count_java("src/이코테_자바")
+programmers_count = count_java("src/programmers")
+boj_count = count_java("src/BOJ")
+total_solved = ikote_count + programmers_count + boj_count
 
 
-ikote = count_java_files("src/이코테_자바")
-programmers = count_java_files("src/programmers")
-boj = count_java_files("src/BOJ") if os.path.exists("src/BOJ") else 0
-
-total_solved = ikote + programmers + boj
-
-
-# --------------------------------
-# 문제명 파싱 (commit 메시지 기반)
-# --------------------------------
-def extract_problems(msg: str):
+# ----------------------------
+# Extract activity by parsing git commits
+# ----------------------------
+def extract_problems(commit_text):
+    """문제 목록을 파싱 (코드 조각 제거)"""
+    lines = commit_text.split("\n")
     results = []
-    for line in msg.split("\n"):
-        line = line.strip()
-        # 문제명만 추출
+    for line in lines:
         if line.startswith("- "):
-            name = line[2:].strip()
-            if 2 <= len(name) <= 60 and not re.search(r"[);}{=/]", name):
+            name = line.replace("- ", "").strip()
+            if len(name) < 40 and not name.startswith("/"):
                 results.append(name)
     return results
 
 
-# --------------------------------
-# 오늘 푼 문제
-# --------------------------------
+# ----------------------------
+# Today solved
+# ----------------------------
 today = datetime.datetime.now(pytz.timezone("Asia/Seoul")).strftime("%Y-%m-%d")
+today_log = os.popen(f'git log --since="{today}" --pretty=format:"%H|||%s"').read()
+
 today_solved = 0
+for entry in today_log.split("\n"):
+    if not entry.strip():
+        continue
+    commit_hash, msg = entry.split("|||")
+    if not any(k in msg for k in ["프로그램", "프로그래머스", "이코테", "BOJ"]):
+        continue
+    full_commit = os.popen(f"git show {commit_hash}").read()
+    today_solved += len(extract_problems(full_commit))
 
-raw = os.popen(f'git log --since="{today}" --pretty=format:"%B|||END"').read()
-for block in raw.split("|||END"):
-    problems = extract_problems(block)
-    today_solved += len(problems)
 
-
-# --------------------------------
-# 최근 7일 문제
-# --------------------------------
-recent_rows = ""
+# ----------------------------
+# Weekly solved (limit 10)
+# ----------------------------
+weekly_log = os.popen('git log --since="7 days ago" --pretty=format:"%H|||%s"').read()
 weekly_solved = 0
 
-week_raw = os.popen(
-    'git log --since="7 days ago" --pretty=format:"%ad|||%B|||END" --date=short'
-).read()
-
-for block in week_raw.split("|||END"):
-    if "|||" not in block:
+for entry in weekly_log.split("\n"):
+    if not entry.strip():
         continue
-
-    date, msg = block.split("|||", 1)
-    problems = extract_problems(msg)
-
-    if not problems:
+    commit_hash, msg = entry.split("|||")
+    if not any(k in msg for k in ["프로그래머스", "BOJ"]):
         continue
+    full_commit = os.popen(f"git show {commit_hash}").read()
+    weekly_solved += len(extract_problems(full_commit))
 
-    # 카테고리 구분
-    if "프로그래머스" in msg:
-        category = "프로그래머스"
-    elif "이코테" in msg:
-        category = "이코테"
-    else:
-        category = "BOJ"
-
-    for p in problems:
-        recent_rows += f"| {date} | {category} | {p} |\n"
-
-    weekly_solved += len(problems)
+weekly_progress = min(weekly_solved, 10)
 
 
-# --------------------------------
-# history.json 업데이트
-# --------------------------------
-history = {}
+# ----------------------------
+# Update history.json
+# ----------------------------
 if os.path.exists(HISTORY_FILE):
-    with open(HISTORY_FILE, encoding="utf-8") as f:
+    with open(HISTORY_FILE, "r", encoding="utf-8") as f:
         history = json.load(f)
+else:
+    history = {}
 
 history[today] = total_solved
 
@@ -109,64 +107,84 @@ with open(HISTORY_FILE, "w", encoding="utf-8") as f:
     json.dump(history, f, indent=2, ensure_ascii=False)
 
 
-# --------------------------------
-# 그래프 생성
-# --------------------------------
-dates = sorted(history.keys())
-values = [history[d] for d in dates]
+# ----------------------------
+# Trend Chart (last 7 days)
+# ----------------------------
+sorted_dates = sorted(history.keys())[-7:]
+values = [history[d] for d in sorted_dates]
 
 plt.figure(figsize=(8, 4))
-plt.plot(dates, values, marker="o", linewidth=2, color="#40c463")
-plt.grid(alpha=0.3)
-plt.title("문제 풀이 누적 추세")
-plt.xlabel("날짜")
-plt.ylabel("누적 문제 수")
+plt.plot(sorted_dates, values, marker="o", color="#4A90E2")
+plt.title("최근 7일 누적 문제 그래프", fontsize=14)
+plt.grid(True, alpha=0.3)
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt.savefig(TREND_IMG, dpi=200)
+plt.savefig(TREND_IMAGE_PATH, dpi=200)
 plt.close()
 
 
-# --------------------------------
-# SVG Progress Bar 생성
-# --------------------------------
-def make_svg(value, total, color, filename):
-    pct = int((value / total) * 100) if total else 0
-    fill_width = pct * 3  # 100% = 300px
+# ----------------------------
+# Create SVG Progress Bar (Light Blue Dashboard)
+# ----------------------------
+def make_svg(value, max_value, path):
+    pct = int((value / max_value) * 100)
+    bar_w = int((value / max_value) * 240)
 
     svg = f"""
-<svg width="300" height="26">
-  <rect x="0" y="10" width="300" height="10" fill="#e0e0e0" rx="5"/>
-  <rect x="0" y="10" width="{fill_width}" height="10" fill="{color}" rx="5"/>
-  <text x="150" y="9" font-size="12" text-anchor="middle" fill="#555">
-    {value} / {total} ({pct}%)
-  </text>
+<svg width="260" height="40" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="18" width="240" height="10" rx="5" fill="#E6ECF5"/>
+  <rect x="10" y="18" width="{bar_w}" height="10" rx="5" fill="#8AB6F9"/>
+  <text x="130" y="15" font-size="12" text-anchor="middle" fill="#333">{value} / {max_value} ({pct}%)</text>
 </svg>
 """
-    with open(f"{ASSETS}/{filename}", "w", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8") as f:
         f.write(svg)
 
 
-make_svg(today_solved, 10, "#ff6b6b", "today.svg")
-make_svg(weekly_solved, 10, "#4c6ef5", "weekly.svg")
-make_svg(total_solved, 500, "#40c463", "total.svg")
+make_svg(today_solved, 10, TODAY_SVG)
+make_svg(weekly_solved, 10, WEEKLY_SVG)
+make_svg(total_solved, 500, TOTAL_SVG)
 
 
-# --------------------------------
-# README 업데이트
-# --------------------------------
-with open(README_TEMPLATE, encoding="utf-8") as f:
+# ----------------------------
+# Recent Activity Table
+# ----------------------------
+recent_rows = ""
+
+git_recent = os.popen(
+    'git log --since="7 days ago" --pretty=format:"%H|||%ad|||%s" --date=short'
+).read()
+
+for entry in git_recent.split("\n"):
+    if not entry.strip():
+        continue
+    commit_hash, d, msg = entry.split("|||")
+
+    if not any(k in msg for k in ["프로그래머스", "BOJ", "이코테"]):
+        continue
+
+    full = os.popen(f"git show {commit_hash}").read()
+    problems = extract_problems(full)
+
+    for p in problems:
+        recent_rows += f"| {d} | {msg.split()[0]} | {p} |\n"
+
+
+# ----------------------------
+# Apply to README.md
+# ----------------------------
+with open(README_TEMPLATE, "r", encoding="utf-8") as f:
     readme = f.read()
 
 now = datetime.datetime.now(pytz.timezone("Asia/Seoul")).strftime("%Y-%m-%d %H:%M")
 
 new_readme = (
     readme.replace("{{TODAY_SOLVED}}", str(today_solved))
-    .replace("{{WEEKLY_PROGRESS}}", str(weekly_solved))
+    .replace("{{WEEKLY_SOLVED}}", str(weekly_solved))
     .replace("{{TOTAL_SOLVED}}", str(total_solved))
-    .replace("{{IKOTE_COUNT}}", str(ikote))
-    .replace("{{PROGRAMMERS_COUNT}}", str(programmers))
-    .replace("{{BOJ_COUNT}}", str(boj))
+    .replace("{{IKOTE_COUNT}}", str(ikote_count))
+    .replace("{{PROGRAMMERS_COUNT}}", str(programmers_count))
+    .replace("{{BOJ_COUNT}}", str(boj_count))
     .replace("{{RECENT_ACTIVITY_TABLE}}", recent_rows)
     .replace("{{LAST_UPDATE}}", now)
 )
@@ -174,4 +192,4 @@ new_readme = (
 with open("README.md", "w", encoding="utf-8") as f:
     f.write(new_readme)
 
-print("Dashboard README updated successfully!")
+print("README updated.")

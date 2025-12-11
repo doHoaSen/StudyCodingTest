@@ -7,82 +7,82 @@
 
 <table>
 <tr>
-<td align="center" width="33%">
+
+<!-- 오늘 푼 문제 -->
+<td width="50%" align="center">
+<div align="center">
 
 ### 🔥 오늘 푼 문제
-**0 문제**
-<br>
-<img src="./assets/today.svg"/>
+**{{TODAY_SOLVED}} 문제**
 
+<img src="./assets/today.svg" width="260"/>
+
+</div>
 </td>
-<td align="center" width="33%">
+
+<!-- 이번 주 목표 -->
+<td width="50%" align="center">
+<div align="center">
 
 ### 🎯 이번 주 목표 (10문제)
-**11 / 10 문제**
-<br>
-<img src="./assets/weekly.svg"/>
+**{{WEEKLY_SOLVED}} / 10 문제**
 
+<img src="./assets/weekly.svg" width="260"/>
+
+</div>
 </td>
-<td align="center" width="33%">
+
+</tr><tr>
+
+<!-- 누적 해결 -->
+<td width="50%" align="center">
+<div align="center">
 
 ### 📚 누적 해결 문제 수
-**총 50 문제**
-<br>
-<img src="./assets/total.svg"/>
+**총 {{TOTAL_SOLVED}} 문제**
 
+<img src="./assets/total.svg" width="260"/>
+
+</div>
 </td>
+
+<!-- 카테고리별 -->
+<td width="50%" align="center">
+<div align="center">
+
+### 📂 카테고리별 문제 풀이 현황
+
+| 카테고리 | 해결 |
+|---------|------|
+| 📘 이코테(Java) | **{{IKOTE_COUNT}}** |
+| 🚀 프로그래머스 | **{{PROGRAMMERS_COUNT}}** |
+| 🟢 BOJ | **{{BOJ_COUNT}}** |
+
+</div>
+</td>
+
 </tr>
 </table>
 
 ---
 
 ## 📈 문제 풀이 추세 그래프
+> 최근 7일 누적 문제 풀이 변화입니다.
+
 <p align="center">
   <img src="./assets/trend.png" width="650"/>
 </p>
 
 ---
 
-## 📂 카테고리별 문제 풀이 현황
-
-| 카테고리 | 해결 문제 수 |
-|---------|--------------|
-| 📘 이코테(Java) | **14** |
-| 🚀 프로그래머스 전체 | **36** |
-| 🟢 BOJ | **0** |
-
----
-
 ## 🕒 최근 7일 활동 내역
 
-| 날짜 | 카테고리 | 문제 |
-|------|----------|------|
-| 
-2025-12-11 | 프로그래머스 | 크레인 인형뽑기 게임 |
-| 
-2025-12-11 | 프로그래머스 | 성격 유형 검사 |
-| 
-2025-12-11 | 프로그래머스 | 키패드 누르기 |
-| 
-2025-12-10 | 프로그래머스 | 숫자 짝꿍 |
-| 
-2025-12-10 | 프로그래머스 | [PCCE 기출문제] 10번: 데이터분석 |
-| 
-2025-12-09 | 프로그래머스 | 햄버거 만들기 |
-| 
-2025-12-09 | 프로그래머스 | 문자열 나누기 |
-| 
-2025-12-09 | 프로그래머스 | [1차]다트게임 |
-| 
-2025-12-09 | 프로그래머스 | 로또의 최고순위와 최저순위 |
-| 
-2025-12-09 | 프로그래머스 | 대충 만든 자판 |
-| 
-2025-12-05 | 프로그래머스 | 실패율 |
-
+| 날짜 | 카테고리 | 문제명 |
+|------|----------|---------|
+{{RECENT_ACTIVITY_TABLE}}
 
 ---
 
 <br>
 
-⏰ **최근 업데이트:** 2025-12-11 14:19
+⏰ **최근 업데이트:** {{LAST_UPDATE}}
