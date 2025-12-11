@@ -9,13 +9,12 @@
 ---
 
 ## 🎯 주간 목표 (10문제)
-<img src="https://progress-bar.dev/0/?scale=10&width=300&color=blue&suffix=/10" />
+<img src="./assets/progress_weekly.svg" width="400"/>
 
 ---
 
 ## 📊 누적 해결 문제 수
-<img src="https://progress-bar.dev/50/?scale=500&width=300&color=40c463&title=Total" />
-
+<img src="./assets/progress_total.svg" width="400"/>
 ---
 
 ## 📈 문제 풀이 추세 그래프

@@ -7,21 +7,21 @@ import matplotlib.pyplot as plt
 
 README_TEMPLATE = "README.md"
 HISTORY_FILE = "solve_history.json"
-TREND_IMAGE_PATH = "assets/trend.png"
 
-# Ensure assets folder exists
+TREND_IMAGE_PATH = "assets/trend.png"
+WEEKLY_SVG_PATH = "assets/progress_weekly.svg"
+TOTAL_SVG_PATH = "assets/progress_total.svg"
+
 os.makedirs("assets", exist_ok=True)
 
 
-# ---------------- Java 파일 자동 카운트 함수 ----------------
+# ---------------- Java 파일 자동 카운트 ----------------
 def count_java_files(path):
     if not os.path.exists(path):
         return 0
     return sum(
-        1
-        for _, _, files in os.walk(path)
-        for f in files
-        if f.endswith(".java")
+        1 for _, _, files in os.walk(path)
+        for f in files if f.endswith(".java")
     )
 
 
@@ -31,6 +31,32 @@ programmers_count = count_java_files("src/programmers")
 boj_count = count_java_files("src/BOJ")
 
 total_solved = ikote_count + programmers_count + boj_count
+
+
+# ---------------- SVG Progress Bar 생성 함수 ----------------
+def create_svg_progress_bar(value, total, filename, bar_color="#40c463"):
+    """SVG 형태의 Progress Bar 생성"""
+    width = 400
+    height = 28
+    percent = max(0, min(1, value / total))
+    filled = int(width * percent)
+
+    svg = f"""
+<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">
+    <rect rx="6" ry="6" width="{width}" height="{height}" fill="#e6e6e6"/>
+    <rect rx="6" ry="6" width="{filled}" height="{height}" fill="{bar_color}"/>
+    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+        font-size="14" fill="#000">
+        {value} / {total} ({int(percent*100)}%)
+    </text>
+</svg>
+"""
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(svg)
+
+
+# 주간 목표는 10문제 고정
+weekly_goal = 10
 
 
 # ---------------- Today Solve Count ----------------
@@ -54,7 +80,10 @@ for entry in today_log.split("\n"):
 
 
 # ---------------- Weekly Progress ----------------
-weekly_log = os.popen('git log --since="7 days ago" --pretty=format:"%H|||%s"').read()
+weekly_log = os.popen(
+    'git log --since="7 days ago" --pretty=format:"%H|||%s"'
+).read()
+
 weekly_solved = 0
 
 for entry in weekly_log.split("\n"):
@@ -69,7 +98,12 @@ for entry in weekly_log.split("\n"):
     full_commit = os.popen(f'git show {commit_hash}').read()
     weekly_solved += len(re.findall(r"- (.+)", full_commit))
 
-weekly_progress = min(weekly_solved, 10)
+weekly_progress = min(weekly_solved, weekly_goal)
+
+
+# ---------------- SVG 생성 실행 ----------------
+create_svg_progress_bar(weekly_progress, weekly_goal, WEEKLY_SVG_PATH)
+create_svg_progress_bar(total_solved, 500, TOTAL_SVG_PATH)  # 총 500문제 기준
 
 
 # ---------------- Load / Init history ----------------
@@ -104,7 +138,8 @@ plt.close()
 recent_rows = ""
 
 git_log = os.popen(
-    'git log --since="7 days ago" --pretty=format:"%H|||%ad|||%s" --date=short'
+    'git log --since="7 days ago" '
+    '--pretty=format:"%H|||%ad|||%s" --date=short'
 ).read()
 
 for entry in git_log.split("\n"):
