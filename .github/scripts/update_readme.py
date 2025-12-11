@@ -34,35 +34,46 @@ def get_commits():
 
 
 # ---------------------------------------------------------
-# 2) Commit 파싱 (카테고리 제거됨)
+# 2) Commit 파싱
 # ---------------------------------------------------------
-def parse_commit_info(commits):
-    today = datetime.date.today()
-    week_start = today - datetime.timedelta(days=today.weekday())
+ddef parse_commit_info(commits):
+     today = datetime.date.today()
+     week_start = today - datetime.timedelta(days=today.weekday())
 
-    today_solved = 0
-    weekly_solved = 0
-    total_solved = 0
-    WEEKLY_GOAL = 10
+     today_solved = 0
+     weekly_solved = 0
+     total_solved = 0
+     WEEKLY_GOAL = 10
 
-    heatmap = defaultdict(int)
+     cat_count = {"이코테": 0, "프로그래머스": 0, "BOJ": 0}
+     heatmap = defaultdict(int)
 
-    for c in commits:
-        commit_date = c["date"]
-        msg = c["msg"]
+     for c in commits:
+         commit_date = c["date"]
+         msg = c["msg"]
 
-        m = re.search(r"(\d+)문제", msg)
-        solved = int(m.group(1)) if m else 0
+         # "N문제" 추출
+         m = re.search(r"(\d+)문제", msg)
+         solved = int(m.group(1)) if m else 0
 
-        if commit_date == today:
-            today_solved += solved
-        if commit_date >= week_start:
-            weekly_solved += solved
+         # 날짜 기반 카운팅
+         if commit_date == today:
+             today_solved += solved
+         if commit_date >= week_start:
+             weekly_solved += solved
 
-        total_solved += solved
-        heatmap[str(commit_date)] += solved
+         total_solved += solved
+         heatmap[str(commit_date)] += solved
 
-    return today_solved, weekly_solved, WEEKLY_GOAL, total_solved, heatmap
+         # 카테고리 분류 복구
+         if "이코테" in msg:
+             cat_count["이코테"] += solved
+         elif "프로그래머스" in msg or "programmers" in msg.lower():
+             cat_count["프로그래머스"] += solved
+         elif "BOJ" in msg or "boj" in msg.lower():
+             cat_count["BOJ"] += solved
+
+     return today_solved, weekly_solved, WEEKLY_GOAL, total_solved, cat_count, heatmap
 
 
 # ---------------------------------------------------------
