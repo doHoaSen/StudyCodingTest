@@ -12,6 +12,7 @@ TREND_IMAGE_PATH = "assets/trend.png"
 # Make sure assets folder exists
 os.makedirs("assets", exist_ok=True)
 
+
 def count_files(path):
     if not os.path.exists(path):
         return 0
@@ -20,12 +21,14 @@ def count_files(path):
         for f in files if f.endswith(".java")
     )
 
+
 # ---- Problem Counts ----
 ikote_count = count_files("src/이코테_자바")
 programmers_lv1_count = count_files("src/프로그래머스_lv1")
 boj_count = count_files("src/BOJ") if os.path.exists("src/BOJ") else 0
 
 total_solved = ikote_count + programmers_lv1_count + boj_count
+
 
 # ---- Today’s Solve Count ----
 today = datetime.datetime.now(pytz.timezone("Asia/Seoul")).strftime("%Y-%m-%d")
@@ -42,6 +45,7 @@ for entry in today_log.split("\n"):
     if "프로그래머스" in msg or "BOJ" in msg:
         full_commit = os.popen(f'git show {commit_hash}').read()
         today_solved += len(re.findall(r"- (.+)", full_commit))
+
 
 # ---- Weekly Progress ----
 weekly_log = os.popen(
@@ -62,6 +66,7 @@ for entry in weekly_log.split("\n"):
 
 weekly_progress = min(weekly_solved, 10)
 
+
 # ---- Load or Init History ----
 if os.path.exists(HISTORY_FILE):
     with open(HISTORY_FILE, "r", encoding="utf-8") as f:
@@ -69,11 +74,13 @@ if os.path.exists(HISTORY_FILE):
 else:
     history = {}
 
+
 # ---- Append Today's Data ----
 history[today] = total_solved
 
 with open(HISTORY_FILE, "w", encoding="utf-8") as f:
     json.dump(history, f, indent=2, ensure_ascii=False)
+
 
 # ---- Trend Chart (line plot) ----
 dates = sorted(history.keys())
@@ -90,6 +97,7 @@ plt.tight_layout()
 plt.savefig(TREND_IMAGE_PATH, dpi=200)
 plt.close()
 
+
 # ---- Recent Activity Table ----
 recent_rows = ""
 
@@ -103,6 +111,7 @@ for entry in git_log.split("\n"):
 
     commit_hash, commit_date, message = entry.split("|||")
 
+    # Parse date from YYMMDD → YYYY-MM-DD
     token = message.split()[0]
     if re.match(r"\d{6}", token):
         yy, mm, dd = token[:2], token[2:4], token[4:6]
@@ -110,6 +119,7 @@ for entry in git_log.split("\n"):
     else:
         formatted_date = commit_date
 
+    # Category
     if "프로그래머스" in message:
         category = "프로그래머스"
     elif "이코테" in message:
@@ -124,6 +134,7 @@ for entry in git_log.split("\n"):
 
     for p in problems:
         recent_rows += f"| {formatted_date} | {category} | {p.strip()} |\n"
+
 
 # ---- Update README ----
 with open(README_TEMPLATE, "r", encoding="utf-8") as f:
