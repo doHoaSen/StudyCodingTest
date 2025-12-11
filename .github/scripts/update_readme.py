@@ -148,7 +148,7 @@ def generate_heatmap(path, heatmap):
     today = datetime.date.today()
     dates = [(today - datetime.timedelta(days=i)) for i in range(59, -1, -1)]
 
-    # 🔵 수정된 블루 팔레트 규칙
+    # 색상 규칙
     def color(v):
         if v == 0:
             return "#ebf2ff"    # 0
@@ -162,9 +162,12 @@ def generate_heatmap(path, heatmap):
     width = cols * (cell + gap)
     height = rows * (cell + gap)
 
-    svg = [f'<svg width="{width}" height="{height + 40}" xmlns="http://www.w3.org/2000/svg">']
+    # 🔥 히트맵 + 범례 공간 넉넉히 확보
+    svg_height = height + 110
 
-    # Heatmap cells
+    svg = [f'<svg width="{width}" height="{svg_height}" xmlns="http://www.w3.org/2000/svg">']
+
+    # Heatmap 그리기
     for idx, day in enumerate(dates):
         r = idx % rows
         c = idx // rows
@@ -177,8 +180,9 @@ def generate_heatmap(path, heatmap):
             f'<title>{tooltip}</title></rect>'
         )
 
-    # Legend
-    svg.append('<g transform="translate(0, 110)">')
+    # 🔥 범례를 히트맵 아래에 배치
+    legend_y = height + 20
+    svg.append(f'<g transform="translate(0, {legend_y})">')
 
     legend = [
         ("0", "#ebf2ff"),
