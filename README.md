@@ -11,7 +11,7 @@
 
 <td align="center" style="border:none; padding:20px;">
 <h3>🔥 오늘 푼 문제</h3>
-<p>4 / 3 문제</p>
+<p>0 / 3 문제</p>
 <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/today.svg" width="160"/>
 </td>
 
@@ -41,4 +41,4 @@
 
 
 
-⏰ 최근 업데이트: **2025-12-12 00:03**
+⏰ 최근 업데이트: **2025-12-12 00:06**
