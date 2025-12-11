@@ -6,40 +6,38 @@
 
 ## 📌 주요 통계 대시보드
 
-<div align="center">
+<table align="center" style="border-collapse:collapse;">
+<tr>
 
-<div style="display:inline-block; width:260px; text-align:center; padding:20px; margin:10px;">
+<td align="center" style="border:none; padding:20px;">
 <h3>🔥 오늘 푼 문제</h3>
 <p>3 문제</p>
 <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/today.svg" width="160"/>
-</div>
+</td>
 
-<div style="display:inline-block; width:260px; text-align:center; padding:20px; margin:10px;">
+<td align="center" style="border:none; padding:20px;">
 <h3>🎯 이번 주 목표</h3>
 <p>10 / 10 문제</p>
 <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/weekly.svg" width="160"/>
-</div>
+</td>
 
-<div style="display:inline-block; width:260px; text-align:center; padding:20px; margin:10px;">
+<td align="center" style="border:none; padding:20px;">
 <h3>📚 누적 해결 문제</h3>
 <p>총 36 문제</p>
 <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/total.svg" width="160"/>
-</div>
+</td>
 
-</div>
-
+</tr>
+</table>
 
 <br>
-
 
 ## 🔥 최근 60일 Heatmap
 
-<div align="center">
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/heatmap.svg" width="380"/>
-</div>
+<p align="center">
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/heatmap.svg" width="420"/>
+</p>
 
-<br>
+<br><br>
 
-<br>
-
-⏰ 최근 업데이트: **2025-12-11 17:00**
+⏰ 최근 업데이트: **2025-12-11 17:02**
