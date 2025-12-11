@@ -32,33 +32,31 @@ def parse_log(out):
 
 
 # ---------------------------------------------------------
-# 1) 최근 60일 commit (오늘/이번주/heatmap)
+# git log fetch — 최근 60일 / 전체
 # ---------------------------------------------------------
 def get_commits_recent():
     cmd = ["git", "log", "--since=60 days ago", "--pretty=%ct|%B"]
-    out = subprocess.check_output(cmd).decode("utf-8").strip().split("\n")
+    out = subprocess.check_output(cmd).decode().strip().split("\n")
     return parse_log(out)
 
 
-# ---------------------------------------------------------
-# 2) 전체 commit (누적 총합)
-# ---------------------------------------------------------
 def get_commits_all():
     cmd = ["git", "log", "--pretty=%ct|%B"]
-    out = subprocess.check_output(cmd).decode("utf-8").strip().split("\n")
+    out = subprocess.check_output(cmd).decode().strip().split("\n")
     return parse_log(out)
 
 
 # ---------------------------------------------------------
-# 여러 "N문제"를 합산하는 문제 풀이수 계산
+# "N문제" 패턴 모두 추출하여 합산
 # ---------------------------------------------------------
 def extract_solved(msg):
-    nums = re.findall(r"(\d+)문제", msg)
+    # 모든 패턴: "2문제", "2 문제", "추가 1문제", "1문제 추가" 등
+    nums = re.findall(r"(\d+)\s*문제", msg)
     return sum(int(n) for n in nums) if nums else 0
 
 
 # ---------------------------------------------------------
-# 최근 기준 파싱 (오늘 / 이번 주 / heatmap)
+# 오늘 / 이번주 / heatmap 계산
 # ---------------------------------------------------------
 def parse_recent_info(commits):
     today = datetime.date.today()
@@ -75,10 +73,10 @@ def parse_recent_info(commits):
 
         solved = extract_solved(msg)
 
-        # 📌 Heatmap — solved=0이어도 칸은 표시됨
+        # Heatmap 채우기 (문제 없어도 날짜칸은 있어야 함)
         heatmap[str(commit_date)] += solved
 
-        # 📌 "문제 수가 있는 commit"만 문제 풀이로 인정 (이코테 제외 효과)
+        # 문제 수가 0이면: 이코테 개념 등 → 문제풀이 아님
         if solved == 0:
             continue
 
@@ -92,15 +90,13 @@ def parse_recent_info(commits):
 
 
 # ---------------------------------------------------------
-# 전체 commit 기반 파싱 (누적 합계)
+# 전체 commit 기준 누적 문제 수 계산
 # ---------------------------------------------------------
 def parse_total_info(commits):
     total_solved = 0
 
     for c in commits:
         solved = extract_solved(c["msg"])
-
-        # solved=0: 이코테 같은 개념 공부 커밋 → 누적에서 제외
         total_solved += solved
 
     return total_solved
