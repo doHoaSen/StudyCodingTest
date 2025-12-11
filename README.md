@@ -4,17 +4,17 @@
 ---
 
 ## 🔥 오늘의 활동
-**오늘 푼 문제 수: {{TODAY_SOLVED}} 문제**
+**오늘 푼 문제 수: 0 문제**
 
 ---
 
 ## 🎯 주간 목표 (10문제)
-<img src="https://progress-bar.dev/{{WEEKLY_PROGRESS}}/?scale=10&width=300&color=blue&suffix=/10" />
+<img src="https://progress-bar.dev/0/?scale=10&width=300&color=blue&suffix=/10" />
 
 ---
 
 ## 📊 누적 해결 문제 수
-<img src="https://progress-bar.dev/{{TOTAL_SOLVED}}/?scale=500&width=300&color=40c463&title=Total" />
+<img src="https://progress-bar.dev/50/?scale=500&width=300&color=40c463&title=Total" />
 
 ---
 
@@ -29,9 +29,9 @@
 
 | 분류 | 해결 문제 수 |
 |------|--------------|
-| 📘 이코테(Java) | **{{IKOTE_COUNT}}** |
-| 🚀 프로그래머스 | **{{PROGRAMMERS_COUNT}}** |
-| 🟢 BOJ | **{{BOJ_COUNT}}** |
+| 📘 이코테(Java) | **14** |
+| 🚀 프로그래머스 | **36** |
+| 🟢 BOJ | **0** |
 
 ---
 
@@ -39,10 +39,10 @@
 
 | 날짜 | 카테고리 | 문제 |
 |------|----------|------|
-{{RECENT_ACTIVITY_TABLE}}
+
 
 ---
 
 <br>
 
-⏰ **최근 업데이트:** {{LAST_UPDATE}}
+⏰ **최근 업데이트:** 2025-12-11 13:46
