@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Ensure assets exists
+      - name: Ensure assets folder exists
         run: mkdir -p assets
 
       - name: Install Python
@@ -28,13 +28,12 @@ jobs:
 
       - name: Update dashboard
         run: |
-          pip install pytz
           python .github/scripts/update_readme.py
 
       - name: Commit changes
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add README.md assets/*.svg || true
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add README.md assets
           git commit -m "Auto-update dashboard" || echo "No changes"
           git push

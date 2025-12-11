@@ -12,7 +12,7 @@
 
 ### 🔥 오늘 푼 문제
 {{TODAY_COUNT}} 문제  
-<img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/main/assets/today.svg" width="120"/>
+<img src="./assets/today.svg" width="120"/>
 
 </td>
 
@@ -20,7 +20,7 @@
 
 ### 🎯 이번 주 목표 ({{WEEKLY_GOAL}}문제)
 {{WEEKLY_COUNT}} / {{WEEKLY_GOAL}}  
-<img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/main/assets/weekly.svg" width="120"/>
+<img src="./assets/weekly.svg" width="120"/>
 
 </td>
 
@@ -28,7 +28,7 @@
 
 ### 📚 누적 해결 비율
 총 {{TOTAL_SOLVED}} 문제  
-<img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/main/assets/total.svg" width="120"/>
+<img src="./assets/total.svg" width="120"/>
 
 </td>
 </tr>
@@ -43,19 +43,19 @@
 <td align="center">
 이코테  
 <br>
-<img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/main/assets/ikote.svg" width="130"/>
+<img src="./assets/ikote.svg" width="130"/>
 </td>
 
 <td align="center">
 프로그래머스  
 <br>
-<img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/main/assets/programmers.svg" width="130"/>
+<img src="./assets/programmers.svg" width="130"/>
 </td>
 
 <td align="center">
 BOJ  
 <br>
-<img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/main/assets/boj.svg" width="130"/>
+<img src="./assets/boj.svg" width="130"/>
 </td>
 </tr>
 </table>
@@ -64,7 +64,7 @@ BOJ
 
 ## 🔥 최근 60일 풀이 Heatmap
 
-<img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/main/assets/heatmap.svg"/>
+<img src="./assets/heatmap.svg"/>
 
 ---
 
