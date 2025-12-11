@@ -32,12 +32,16 @@
 
 <br>
 
+---
+
 ## 🔥 최근 60일 Heatmap
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/heatmap.svg" width="420"/>
 </p>
 
-<br><br>
+<p align="center"><i>최근 60일 문제 풀이 기록을 시각화한 히트맵입니다.</i></p>
+
+---
 
 ⏰ 최근 업데이트: **{{UPDATED_AT}}**

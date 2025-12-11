@@ -16,6 +16,7 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "").split("/")[1]
 if not os.path.exists(ASSETS):
     os.makedirs(ASSETS)
 
+
 # ---------------------------------------------------------
 # 공통 log 파서
 # ---------------------------------------------------------
@@ -48,7 +49,7 @@ def get_commits_all():
 
 
 # ---------------------------------------------------------
-# 문제 수 추출 함수 (핵심)
+# 문제 수 추출 함수
 # ---------------------------------------------------------
 def extract_solved(msg):
     nums = re.findall(r"(\d+)문제", msg)
@@ -56,7 +57,7 @@ def extract_solved(msg):
 
 
 # ---------------------------------------------------------
-# 최근 기준(today / weekly / heatmap)
+# 최근(today / weekly / heatmap)
 # ---------------------------------------------------------
 def parse_recent_info(commits):
     today = datetime.date.today()
@@ -69,17 +70,14 @@ def parse_recent_info(commits):
 
     for c in commits:
         commit_date = c["date"]
-        msg = c["msg"]
-        solved = extract_solved(msg)
+        solved = extract_solved(c["msg"])
 
         # Heatmap
         heatmap[str(commit_date)] += solved
 
-        # 오늘
         if commit_date == today:
             today_solved += solved
 
-        # 이번 주
         if commit_date >= week_start:
             weekly_solved += solved
 
@@ -97,19 +95,20 @@ def parse_total_info(commits):
 
 
 # ---------------------------------------------------------
-# 도넛 그래프용 색상 그라데이션
+# 도넛 그래프 색상 보간 (0% → 연파랑, 100% → #4aa3ff)
 # ---------------------------------------------------------
 def lerp(a, b, t):
     return int(a + (b - a) * t)
 
 
 def donut_color(percent):
-    start = (188, 220, 255)  # 연한 블루
-    end = (0, 85, 255)       # 진한 블루
+    start = (220, 236, 255)   # 0% → 매우 연한 파랑 (#dcecff)
+    end = (74, 163, 255)      # 100% → 기존 색 #4aa3ff
 
     r = lerp(start[0], end[0], percent)
     g = lerp(start[1], end[1], percent)
     b = lerp(start[2], end[2], percent)
+
     return f"rgb({r},{g},{b})"
 
 
@@ -118,10 +117,12 @@ def donut_color(percent):
 # ---------------------------------------------------------
 def generate_donut(path, value, goal, label):
     percent = 0 if goal == 0 else min(value / goal, 1)
+
     radius = 40
     C = 2 * math.pi * radius
     progress = percent * C
 
+    # 🎨 퍼센트 기반 색상
     stroke_color = donut_color(percent)
 
     svg = f"""<?xml version="1.0" encoding="UTF-8"?>
@@ -141,13 +142,13 @@ def generate_donut(path, value, goal, label):
 
 
 # ---------------------------------------------------------
-# Heatmap SVG (블루 계열 + 범례 추가)
+# Heatmap SVG (기존 블루 계열 유지 + 범례)
 # ---------------------------------------------------------
 def generate_heatmap(path, heatmap):
     today = datetime.date.today()
     dates = [(today - datetime.timedelta(days=i)) for i in range(59, -1, -1)]
 
-    # 블루 팔레트
+    # 기존 블루 컬러 팔레트 유지
     def color(v):
         if v == 0: return "#ebf2ff"
         if v < 2: return "#c6dbff"
@@ -156,12 +157,14 @@ def generate_heatmap(path, heatmap):
         return "#0066ff"
 
     cell, gap, rows, cols = 14, 4, 7, 10
+
     width = cols * (cell + gap)
     height = rows * (cell + gap)
+    svg_height = height + 65
 
-    svg = [f'<svg width="{width}" height="{height + 40}" xmlns="http://www.w3.org/2000/svg">']
+    svg = [f'<svg width="{width}" height="{svg_height}" xmlns="http://www.w3.org/2000/svg">']
 
-    # Grid
+    # Heatmap 칸
     for idx, day in enumerate(dates):
         r = idx % rows
         c = idx // rows
@@ -173,8 +176,8 @@ def generate_heatmap(path, heatmap):
             f'rx="3" fill="{color(v)}"><title>{tooltip}</title></rect>'
         )
 
-    # Legend
-    svg.append('<g transform="translate(0, 110)">')
+    # 범례
+    svg.append(f'<g transform="translate(0, {height + 20})">')
 
     legend = [
         ("0", "#ebf2ff"),
