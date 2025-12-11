@@ -19,7 +19,7 @@
 <td align="center">
 
 ### 🎯 이번 주 목표 (10문제)
-0 / 10  
+10 / 10  
 <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/main/assets/weekly.svg" width="120"/>
 
 </td>
@@ -27,7 +27,7 @@
 <td align="center">
 
 ### 📚 누적 해결 비율
-총 0 문제  
+총 36 문제  
 <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/main/assets/total.svg" width="120"/>
 
 </td>
@@ -70,4 +70,4 @@ BOJ
 
 <br>
 
-⏰ 최근 업데이트: **2025-12-11 06:38**
+⏰ 최근 업데이트: **2025-12-11 06:42**
