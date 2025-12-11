@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="160" height="160" xmlns="http://www.w3.org/2000/svg">
   <circle cx="80" cy="80" r="40" stroke="#e5e7eb" stroke-width="12" fill="none"/>
-  <circle cx="80" cy="80" r="40" stroke="rgb(0,85,255)" stroke-width="12"
+  <circle cx="80" cy="80" r="40" stroke="rgb(74,163,255)" stroke-width="12"
     fill="none"
     stroke-dasharray="251.32741228718345 0.0"
     transform="rotate(-90 80 80)"
