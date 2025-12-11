@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0   # git log 위해 필요
+          fetch-depth: 0
 
       - name: Ensure assets exists
         run: mkdir -p assets
@@ -33,8 +33,8 @@ jobs:
 
       - name: Commit changes
         run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          git add README.md assets || true
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add README.md assets/*.svg || true
           git commit -m "Auto-update dashboard" || echo "No changes"
           git push
