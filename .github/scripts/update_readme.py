@@ -16,6 +16,7 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "").split("/")[1]
 if not os.path.exists(ASSETS):
     os.makedirs(ASSETS)
 
+
 # ---------------------------------------------------------
 # 공통 log 파서
 # ---------------------------------------------------------
@@ -64,8 +65,9 @@ def parse_recent_info(commits):
         commit_date = c["date"]
         msg = c["msg"]
 
-        m = re.search(r"(\d+)문제", msg)
-        solved = int(m.group(1)) if m else 0
+        # 📌 여러 개의 "N문제"를 모두 합산
+        nums = re.findall(r"(\d+)문제", msg)
+        solved = sum(int(n) for n in nums) if nums else 0
 
         if commit_date == today:
             today_solved += solved
@@ -79,7 +81,7 @@ def parse_recent_info(commits):
 
 
 # ---------------------------------------------------------
-# 전체 commit 기반 파싱 (누적 합계 + 카테고리)
+# 전체 commit 기반 파싱 (누적 합계)
 # ---------------------------------------------------------
 def parse_total_info(commits):
     total_solved = 0
@@ -88,14 +90,15 @@ def parse_total_info(commits):
     for c in commits:
         msg = c["msg"]
 
-        m = re.search(r"(\d+)문제", msg)
-        solved = int(m.group(1)) if m else 0
+        # 📌 전체 commit도 여러 "N문제" 합산
+        nums = re.findall(r"(\d+)문제", msg)
+        solved = sum(int(n) for n in nums) if nums else 0
         total_solved += solved
 
         # 카테고리 분류
         if "이코테" in msg:
             cat_count["이코테"] += solved
-        elif "프로그래머스" in msg:
+        elif "프로그래머스" in msg or "programmers" in msg.lower():
             cat_count["프로그래머스"] += solved
         elif "BOJ" in msg or "boj" in msg.lower():
             cat_count["BOJ"] += solved
@@ -152,7 +155,6 @@ def generate_heatmap(path, heatmap):
     for idx, day in enumerate(dates):
         r = idx % rows
         c = idx // rows
-
         v = heatmap.get(str(day), 0)
         tooltip = f"{day} — {v} solved"
 
