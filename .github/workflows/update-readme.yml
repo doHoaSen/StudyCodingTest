@@ -26,6 +26,13 @@ jobs:
         with:
           python-version: "3.10"
 
+      # ✅ Git commit timestamp 확인용 Debug Step 추가
+      - name: Debug git log
+        run: |
+          echo "====== DEBUG: GIT LOG ======"
+          git log --pretty="%h | %cd | %ct | %s" --date=iso | head -n 50
+          echo "============================"
+
       - name: Update dashboard
         run: |
           pip install pytz
