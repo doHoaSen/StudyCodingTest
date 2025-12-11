@@ -4,176 +4,151 @@ import json
 import datetime
 import pytz
 import matplotlib.pyplot as plt
-from matplotlib import font_manager, rcParams
+import numpy as np
 
-USERNAME = "doHoaSen"
-REPO = "StudyCodingTest"
+# 폰트 설정 (GitHub Actions용)
+plt.rcParams["font.family"] = "DejaVu Sans"
 
-TEMPLATE = "template_readme.md"
-HISTORY = "solve_history.json"
+ROOT = "."
+TEMPLATE_FILE = "template_readme.md"
+OUTPUT_README = "README.md"
 
-ASSETS = "assets"
-TREND_IMG = f"{ASSETS}/trend.png"
-
+ASSETS = os.path.join(ROOT, "assets")
 os.makedirs(ASSETS, exist_ok=True)
 
-# -------------------- 폰트 설정 --------------------
-font_manager.fontManager.addfont('/usr/share/fonts/truetype/nanum/NanumGothic.ttf')
-rcParams['font.family'] = 'NanumGothic'
-
-
-# -------------------- Java 파일 수 카운트 --------------------
-def count_java(path):
+# -------------------------
+# 유틸 함수
+# -------------------------
+def count_java_files(path):
     if not os.path.exists(path):
         return 0
-    return sum(1 for r, _, f in os.walk(path) for ff in f if ff.endswith(".java"))
+    return sum(f.endswith(".java") for _, _, fs in os.walk(path) for f in fs)
 
-ikote_cnt = count_java("src/이코테_자바")
-prog_cnt = count_java("src/programmers")
-boj_cnt = count_java("src/BOJ")
+def parse_commits(days=60):
+    """최근 N일간 커밋 수집 → 날짜별 문제 푼 수 계산"""
+    log = os.popen(
+        f'git log --since="{days} days ago" --pretty=format:"%ad|||%s" --date=short'
+    ).read()
 
-total_cnt = ikote_cnt + prog_cnt + boj_cnt
-
-
-# -------------------- Commit 파싱 --------------------
-def extract_problems(text):
-    return re.findall(r"- (.+)", text)
-
-
-def parse_gitlog(log):
-    solved = 0
-    for entry in log.split("\n"):
-        if "프로그래머스" not in entry and "이코테" not in entry and "BOJ" not in entry:
+    stats = {}
+    for line in log.split("\n"):
+        if "프로그래머스" not in line and "이코테" not in line and "BOJ" not in line:
             continue
+
         try:
-            commit_hash, msg = entry.split("|||")
-            full = os.popen(f"git show {commit_hash}").read()
-            solved += len(extract_problems(full))
+            date, msg = line.split("|||")
         except:
-            pass
-    return solved
-
-
-# -------------------- Today / Weekly --------------------
-today_str = datetime.datetime.now(pytz.timezone("Asia/Seoul")).strftime("%Y-%m-%d")
-
-today_log = os.popen(f'git log --since="{today_str}" --pretty=format:"%H|||%s"').read()
-week_log = os.popen('git log --since="7 days ago" --pretty=format:"%H|||%s"').read()
-
-today_solved = parse_gitlog(today_log)
-weekly_solved = parse_gitlog(week_log)
-
-
-# -------------------- 최근 7일 활동 내역 --------------------
-recent = ""
-git_recent = os.popen(
-    'git log --since="7 days ago" --pretty=format:"%H|||%ad|||%s" --date=short'
-).read()
-
-for line in git_recent.split("\n"):
-    if not line.strip():
-        continue
-    try:
-        commit_hash, date, msg = line.split("|||")
-
-        if not any(k in msg for k in ["프로그래머스", "이코테", "BOJ"]):
             continue
 
-        full = os.popen(f"git show {commit_hash}").read()
-        problems = extract_problems(full)
+        # commit message: "251210 프로그래머스: lv.1 3문제"
+        m = re.search(r"(\d+)문제", msg)
+        solved = int(m.group(1)) if m else 1
 
-        cat = "프로그래머스" if "프로그래머스" in msg else "이코테" if "이코테" in msg else "BOJ"
+        stats[date] = stats.get(date, 0) + solved
 
-        for p in problems:
-            recent += f"| {date} | {cat} | {p.strip()} |\n"
-
-    except:
-        pass
+    return stats
 
 
-# -------------------- Trend 그래프 --------------------
-history = {}
+# -------------------------
+# 문제 카운트
+# -------------------------
+ikote = count_java_files("src/이코테_자바")
+programmers = count_java_files("src/programmers")
+boj = count_java_files("src/BOJ")
 
-if os.path.exists(HISTORY):
-    with open(HISTORY, encoding="utf-8") as f:
-        history = json.load(f)
+total = ikote + programmers + boj
 
-history[today_str] = total_cnt
+# -------------------------
+# 오늘 날짜 / 주간 통계
+# -------------------------
+today = datetime.datetime.now(pytz.timezone("Asia/Seoul")).strftime("%Y-%m-%d")
+week_log = parse_commits(7)
+today_solved = week_log.get(today, 0)
+weekly_solved = sum(week_log.values())
 
-with open(HISTORY, "w", encoding="utf-8") as f:
-    json.dump(history, f, indent=2, ensure_ascii=False)
+# -------------------------
+# Heatmap 데이터
+# -------------------------
+heatmap_data = parse_commits(60)
 
-dates = sorted(history.keys())
-values = [history[d] for d in dates]
-
-plt.figure(figsize=(8, 4))
-plt.plot(dates, values, marker="o", color="#4ea3ff")
-plt.title("최근 7일 누적 문제 풀이")
-plt.grid(True, alpha=0.3)
-plt.xticks(rotation=30)
-plt.tight_layout()
-plt.savefig(TREND_IMG, dpi=200)
-plt.close()
-
-
-# -------------------- Donut Chart --------------------
-def donut(value, total, filename):
-    percent = 0 if total == 0 else (value / total) * 100
-
-    svg = f'''
-<svg width="160" height="160" viewBox="0 0 42 42">
-  <circle cx="21" cy="21" r="15.915" fill="#e6f3ff"/>
-  <circle cx="21" cy="21" r="15.915"
-    fill="transparent"
-    stroke="#4ea3ff"
-    stroke-width="4"
-    stroke-dasharray="{percent} {100-percent}"
-    transform="rotate(-90 21 21)"
-  />
-  <text x="50%" y="50%" dy=".3em" text-anchor="middle" font-size="8">{value}</text>
-</svg>
-'''
-    with open(f"{ASSETS}/{filename}", "w", encoding="utf-8") as f:
-        f.write(svg)
-
-donut(ikote_cnt, total_cnt, "ikote.svg")
-donut(prog_cnt, total_cnt, "programmers.svg")
-donut(boj_cnt, total_cnt, "boj.svg")
+# -------------------------
+# Donut Chart 생성
+# -------------------------
+def donut(value, label, filename, color="#4DB6E8"):
+    fig, ax = plt.subplots(figsize=(3, 3))
+    ax.pie(
+        [value, 1],
+        radius=1,
+        colors=[color, "#E8F4FB"],
+        startangle=90,
+        counterclock=False,
+        wedgeprops={"width": 0.35},
+    )
+    ax.text(0, 0, label, ha="center", va="center", fontsize=16)
+    ax.set(aspect="equal")
+    plt.savefig(os.path.join(ASSETS, filename), transparent=True)
+    plt.close()
 
 
-# -------------------- Progress Bar --------------------
-def bar(value, max_value, filename):
-    percent = int((value / max_value) * 100) if max_value else 0
-    svg = f'''
-<svg width="260" height="26">
-  <rect width="260" height="20" fill="#e6f3ff" rx="4"/>
-  <rect width="{2.6 * percent}" height="20" fill="#4ea3ff" rx="4"/>
-  <text x="130" y="14" text-anchor="middle" font-size="10">{value} / {max_value}</text>
-</svg>
-'''
-    with open(f"{ASSETS}/{filename}", "w", encoding="utf-8") as f:
-        f.write(svg)
+donut(today_solved, str(today_solved), "today.svg")
+donut(weekly_solved, str(weekly_solved), "weekly.svg")
+donut(total, str(total), "total.svg")
+donut(total, "전체", "category_total.svg")
 
-bar(today_solved, 10, "today.svg")
-bar(weekly_solved, 10, "weekly.svg")
-bar(total_cnt, max(total_cnt, 1), "total.svg")
+donut(ikote, str(ikote), "category_ikote.svg")
+donut(programmers, str(programmers), "category_programmers.svg")
+donut(boj, str(boj), "category_boj.svg")
+
+# -------------------------
+# Heatmap 생성
+# -------------------------
+def generate_heatmap(data, filename):
+    dates = []
+    values = []
+
+    today = datetime.date.today()
+    for i in range(60):
+        d = today - datetime.timedelta(days=i)
+        ds = d.strftime("%Y-%m-%d")
+        dates.append(d)
+        values.append(data.get(ds, 0))
+
+    dates = dates[::-1]
+    values = values[::-1]
+
+    fig, ax = plt.subplots(figsize=(12, 2))
+    vmax = max(values) if max(values) > 0 else 1
+
+    cmap = plt.cm.get_cmap("Blues")
+    colors = [cmap(v / vmax) for v in values]
+
+    ax.bar(range(60), [1]*60, color=colors, width=1.0)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.set_xlim(0, 60)
+
+    plt.savefig(os.path.join(ASSETS, filename), transparent=True)
+    plt.close()
 
 
-# -------------------- README 생성 --------------------
-with open(TEMPLATE, encoding="utf-8") as f:
+generate_heatmap(heatmap_data, "heatmap.svg")
+
+# -------------------------
+# README 생성
+# -------------------------
+with open(TEMPLATE_FILE, "r", encoding="utf-8") as f:
     template = f.read()
 
-out = (
+now = datetime.datetime.now(pytz.timezone("Asia/Seoul")).strftime("%Y-%m-%d %H:%M")
+
+readme = (
     template.replace("{{TODAY_SOLVED}}", str(today_solved))
     .replace("{{WEEKLY_SOLVED}}", str(weekly_solved))
-    .replace("{{TOTAL_SOLVED}}", str(total_cnt))
-    .replace("{{RECENT_ACTIVITY_TABLE}}", recent)
-    .replace("{{USERNAME}}", USERNAME)
-    .replace("{{REPO}}", REPO)
-    .replace("{{LAST_UPDATE}}", datetime.datetime.now(pytz.timezone("Asia/Seoul")).strftime("%Y-%m-%d %H:%M"))
+    .replace("{{TOTAL_SOLVED}}", str(total))
+    .replace("{{LAST_UPDATE}}", now)
 )
 
-with open("README.md", "w", encoding="utf-8") as f:
-    f.write(out)
+with open(OUTPUT_README, "w", encoding="utf-8") as f:
+    f.write(readme)
 
-print("README updated.")
+print("README updated successfully.")

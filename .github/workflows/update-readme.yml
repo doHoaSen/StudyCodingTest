@@ -5,7 +5,8 @@ permissions:
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   schedule:
     - cron: "0 0 * * *"
 
@@ -20,23 +21,15 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install Korean Fonts
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y fonts-nanum
-          sudo fc-cache -fv
-
-      - name: Install dependencies
-        run: |
-          pip install pytz matplotlib
+      - run: pip install pytz matplotlib
 
       - name: Update README
         run: python .github/scripts/update_readme.py
 
-      - name: Commit and push
+      - name: Commit changes
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add README.md solve_history.json assets/*
-          git commit -m "Auto-update dashboard" || echo "No changes"
+          git add README.md assets/*.svg
+          git commit -m "Auto update README" || echo "No changes"
           git push
