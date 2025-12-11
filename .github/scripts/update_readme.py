@@ -32,31 +32,31 @@ def parse_log(out):
 
 
 # ---------------------------------------------------------
-# git log fetch — 최근 60일 / 전체
+# Commit fetcher
 # ---------------------------------------------------------
 def get_commits_recent():
-    cmd = ["git", "log", "--since=60 days ago", "--pretty=%ct|%B"]
-    out = subprocess.check_output(cmd).decode().strip().split("\n")
+    out = subprocess.check_output(
+        ["git", "log", "--since=60 days ago", "--pretty=%ct|%B"]
+    ).decode().strip().split("\n")
     return parse_log(out)
-
 
 def get_commits_all():
-    cmd = ["git", "log", "--pretty=%ct|%B"]
-    out = subprocess.check_output(cmd).decode().strip().split("\n")
+    out = subprocess.check_output(
+        ["git", "log", "--pretty=%ct|%B"]
+    ).decode().strip().split("\n")
     return parse_log(out)
 
 
 # ---------------------------------------------------------
-# "N문제" 패턴 모두 추출하여 합산
+# 문제 수 추출 함수 (핵심)
 # ---------------------------------------------------------
 def extract_solved(msg):
-    # 모든 패턴: "2문제", "2 문제", "추가 1문제", "1문제 추가" 등
-    nums = re.findall(r"(\d+)\s*문제", msg)
+    nums = re.findall(r"(\d+)문제", msg)
     return sum(int(n) for n in nums) if nums else 0
 
 
 # ---------------------------------------------------------
-# 오늘 / 이번주 / heatmap 계산
+# 최근 기준(today / weekly / heatmap)
 # ---------------------------------------------------------
 def parse_recent_info(commits):
     today = datetime.date.today()
@@ -70,19 +70,16 @@ def parse_recent_info(commits):
     for c in commits:
         commit_date = c["date"]
         msg = c["msg"]
-
         solved = extract_solved(msg)
 
-        # Heatmap 채우기 (문제 없어도 날짜칸은 있어야 함)
+        # Heatmap
         heatmap[str(commit_date)] += solved
 
-        # 문제 수가 0이면: 이코테 개념 등 → 문제풀이 아님
-        if solved == 0:
-            continue
-
+        # 오늘
         if commit_date == today:
             today_solved += solved
 
+        # 이번 주
         if commit_date >= week_start:
             weekly_solved += solved
 
@@ -90,16 +87,13 @@ def parse_recent_info(commits):
 
 
 # ---------------------------------------------------------
-# 전체 commit 기준 누적 문제 수 계산
+# 전체 commit 기반 누적
 # ---------------------------------------------------------
 def parse_total_info(commits):
-    total_solved = 0
-
+    total = 0
     for c in commits:
-        solved = extract_solved(c["msg"])
-        total_solved += solved
-
-    return total_solved
+        total += extract_solved(c["msg"])
+    return total
 
 
 # ---------------------------------------------------------
@@ -128,7 +122,7 @@ def generate_donut(path, value, goal, label):
 
 
 # ---------------------------------------------------------
-# Heatmap SVG 생성
+# Heatmap SVG
 # ---------------------------------------------------------
 def generate_heatmap(path, heatmap):
     today = datetime.date.today()
@@ -141,10 +135,7 @@ def generate_heatmap(path, heatmap):
         if v < 10: return "#239a3b"
         return "#196127"
 
-    cell = 14
-    gap = 4
-    cols = 10
-    rows = 7
+    cell, gap, rows, cols = 14, 4, 7, 10
 
     svg = [f'<svg width="{cols*(cell+gap)}" height="{rows*(cell+gap)}" xmlns="http://www.w3.org/2000/svg">']
 
@@ -174,13 +165,11 @@ all_commits = get_commits_all()
 today_solved, weekly_solved, weekly_goal, heatmap_data = parse_recent_info(recent)
 total_solved = parse_total_info(all_commits)
 
-# SVG 생성
 generate_donut(os.path.join(ASSETS, "today.svg"), today_solved, 1, "solved")
 generate_donut(os.path.join(ASSETS, "weekly.svg"), weekly_solved, weekly_goal, "solved")
 generate_donut(os.path.join(ASSETS, "total.svg"), total_solved, max(total_solved, 1), "solved")
 generate_heatmap(os.path.join(ASSETS, "heatmap.svg"), heatmap_data)
 
-# README 업데이트
 with open(TEMPLATE, "r", encoding="utf-8") as f:
     txt = f.read()
 
