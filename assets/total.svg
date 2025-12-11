@@ -1,0 +1,8 @@
+
+<svg width="300" height="30" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="10" width="300" height="10" fill="#ddd" rx="5"/>
+  <rect x="0" y="10" width="30" height="10" fill="#4CAF50" rx="5"/>
+  <text x="150" y="25" font-size="12" text-anchor="middle" fill="#333">
+    50 / 500 (10%)
+  </text>
+</svg>
