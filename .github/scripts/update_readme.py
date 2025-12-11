@@ -148,7 +148,7 @@ def generate_heatmap(path, heatmap):
     today = datetime.date.today()
     dates = [(today - datetime.timedelta(days=i)) for i in range(59, -1, -1)]
 
-    # 🔵 파란 계열 색상 규칙
+    # 색상 규칙
     def color(v):
         if v == 0:
             return "#ebf2ff"    # 0
@@ -158,24 +158,17 @@ def generate_heatmap(path, heatmap):
             return "#4a90ff"    # 3–5
         return "#0066ff"        # 5+
 
-    # 📏 크기 — 초기 버전 그대로
-    cell = 14
-    gap = 4
-    rows = 7
-    cols = 10
+    cell, gap, rows, cols = 14, 4, 7, 10
+    width = cols * (cell + gap)
+    height = rows * (cell + gap)
 
-    grid_width = cols * (cell + gap)
-    grid_height = rows * (cell + gap)
+    # 범례 포함해 여유 공간 확보
+    svg_height = height + 100
 
-    # SVG 높이에 범례 공간만 추가
-    svg_height = grid_height + 60
-
-    svg = [
-        f'<svg width="{grid_width}" height="{svg_height}" xmlns="http://www.w3.org/2000/svg">'
-    ]
+    svg = [f'<svg width="{width}" height="{svg_height}" xmlns="http://www.w3.org/2000/svg">']
 
     # -------------------------
-    # 1) 히트맵 그리기
+    # Heatmap
     # -------------------------
     for idx, day in enumerate(dates):
         r = idx % rows
@@ -190,21 +183,21 @@ def generate_heatmap(path, heatmap):
         )
 
     # -------------------------
-    # 2) 범례 — 초기 버전처럼 grid 아래에 붙이기
+    # Legend (그때 잘 보였던 것 그대로)
     # -------------------------
-    legend_items = [
+    legend = [
         ("0", "#ebf2ff"),
         ("1–2", "#7bb0ff"),
         ("3–5", "#4a90ff"),
         ("5+", "#0066ff"),
     ]
 
-    legend_y = grid_height + 20
+    legend_y = height + 40
     x_offset = 0
 
-    for label, col in legend_items:
+    for label, col in legend:
         svg.append(f'<rect x="{x_offset}" y="{legend_y}" width="14" height="14" fill="{col}" />')
-        svg.append(f'<text x="{x_offset + 20}" y="{legend_y + 12}" font-size="12">{label}</text>')
+        svg.append(f'<text x="{x_offset + 22}" y="{legend_y + 12}" font-size="12">{label}</text>')
         x_offset += 55
 
     svg.append("</svg>")
