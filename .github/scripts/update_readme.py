@@ -36,7 +36,7 @@ def get_commits():
 # ---------------------------------------------------------
 # 2) Commit 파싱
 # ---------------------------------------------------------
-ddef parse_commit_info(commits):
+def parse_commit_info(commits):
      today = datetime.date.today()
      week_start = today - datetime.timedelta(days=today.weekday())
 
