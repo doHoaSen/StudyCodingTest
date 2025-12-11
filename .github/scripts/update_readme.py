@@ -148,23 +148,23 @@ def generate_heatmap(path, heatmap):
     today = datetime.date.today()
     dates = [(today - datetime.timedelta(days=i)) for i in range(59, -1, -1)]
 
-    # 기존 블루 컬러 팔레트 유지
+    # 🔵 수정된 블루 팔레트 규칙
     def color(v):
-        if v == 0: return "#ebf2ff"
-        if v < 2: return "#c6dbff"
-        if v < 4: return "#7bb0ff"
-        if v < 7: return "#4a90ff"
-        return "#0066ff"
+        if v == 0:
+            return "#ebf2ff"    # 0
+        if v <= 2:
+            return "#7bb0ff"    # 1–2
+        if v <= 5:
+            return "#4a90ff"    # 3–5
+        return "#0066ff"        # 6+
 
     cell, gap, rows, cols = 14, 4, 7, 10
-
     width = cols * (cell + gap)
     height = rows * (cell + gap)
-    svg_height = height + 65
 
-    svg = [f'<svg width="{width}" height="{svg_height}" xmlns="http://www.w3.org/2000/svg">']
+    svg = [f'<svg width="{width}" height="{height + 40}" xmlns="http://www.w3.org/2000/svg">']
 
-    # Heatmap 칸
+    # Heatmap cells
     for idx, day in enumerate(dates):
         r = idx % rows
         c = idx // rows
@@ -172,19 +172,19 @@ def generate_heatmap(path, heatmap):
         tooltip = f"{day} — {v} solved"
 
         svg.append(
-            f'<rect x="{c*(cell+gap)}" y="{r*(cell+gap)}" width="{cell}" height="{cell}" '
-            f'rx="3" fill="{color(v)}"><title>{tooltip}</title></rect>'
+            f'<rect x="{c*(cell+gap)}" y="{r*(cell+gap)}" '
+            f'width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
+            f'<title>{tooltip}</title></rect>'
         )
 
-    # 범례
-    svg.append(f'<g transform="translate(0, {height + 20})">')
+    # Legend
+    svg.append('<g transform="translate(0, 110)">')
 
     legend = [
         ("0", "#ebf2ff"),
-        ("1", "#c6dbff"),
-        ("3", "#7bb0ff"),
-        ("5", "#4a90ff"),
-        ("10+", "#0066ff"),
+        ("1–2", "#7bb0ff"),
+        ("3–5", "#4a90ff"),
+        ("5+", "#0066ff"),
     ]
 
     x_offset = 0
@@ -197,7 +197,6 @@ def generate_heatmap(path, heatmap):
 
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(svg))
-
 
 # ---------------------------------------------------------
 # 실행
