@@ -177,9 +177,11 @@ def generate_heatmap(path, heatmap):
     # 🔥 svg 전체 높이 계산
     total_height = top_padding + grid_height + legend_padding + bottom_padding
 
-    # ❗ width 제거 → GitHub 자동 확대됨, height만 유지
-    svg = [f'<svg height="{total_height}" xmlns="http://www.w3.org/2000/svg">']
-
+    svg = [
+        f'<svg width="{total_width}" height="{total_height}" '
+        f'viewBox="0 0 {total_width} {total_height}" '
+        f'xmlns="http://www.w3.org/2000/svg">'
+    ]
     # -------------------------
     # 1) 히트맵 (60일)
     # -------------------------
