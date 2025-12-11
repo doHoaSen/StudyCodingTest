@@ -35,7 +35,7 @@ def parse_log(out):
 # 1) 최근 60일 commit (오늘, 이번 주, 히트맵용)
 # ---------------------------------------------------------
 def get_commits_recent():
-    cmd = ["git", "log", "--since=60 days ago", "--pretty=%ct|%s"]
+    cmd = ["git", "log", "--since=60 days ago", "--pretty=%ct|%B"]
     out = subprocess.check_output(cmd).decode("utf-8").strip().split("\n")
     return parse_log(out)
 
@@ -44,7 +44,7 @@ def get_commits_recent():
 # 2) 전체 commit (누적 총합 계산용)
 # ---------------------------------------------------------
 def get_commits_all():
-    cmd = ["git", "log", "--pretty=%ct|%s"]
+    cmd = ["git", "log", "--pretty=%ct|%B"]
     out = subprocess.check_output(cmd).decode("utf-8").strip().split("\n")
     return parse_log(out)
 
