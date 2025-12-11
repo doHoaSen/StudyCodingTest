@@ -17,12 +17,9 @@ if not os.path.exists(ASSETS):
     os.makedirs(ASSETS)
 
 # ---------------------------------------------------------
-# 1) Commit Log 가져오기 (timestamp 기반)
+# 공통 log 파서
 # ---------------------------------------------------------
-def get_commits():
-    cmd = ["git", "log", "--since=60 days ago", "--pretty=%ct|%s"]
-    out = subprocess.check_output(cmd).decode("utf-8").strip().split("\n")
-
+def parse_log(out):
     commits = []
     for line in out:
         if "|" not in line:
@@ -34,17 +31,33 @@ def get_commits():
 
 
 # ---------------------------------------------------------
-# 2) Commit 파싱
+# 1) 최근 60일 commit (오늘, 이번 주, 히트맵용)
 # ---------------------------------------------------------
-def parse_commit_info(commits):
+def get_commits_recent():
+    cmd = ["git", "log", "--since=60 days ago", "--pretty=%ct|%s"]
+    out = subprocess.check_output(cmd).decode("utf-8").strip().split("\n")
+    return parse_log(out)
+
+
+# ---------------------------------------------------------
+# 2) 전체 commit (누적 총합 계산용)
+# ---------------------------------------------------------
+def get_commits_all():
+    cmd = ["git", "log", "--pretty=%ct|%s"]
+    out = subprocess.check_output(cmd).decode("utf-8").strip().split("\n")
+    return parse_log(out)
+
+
+# ---------------------------------------------------------
+# 최근 기준 파싱 (오늘 / 이번 주 / heatmap)
+# ---------------------------------------------------------
+def parse_recent_info(commits):
     today = datetime.date.today()
     week_start = today - datetime.timedelta(days=today.weekday())
 
     today_solved = 0
     weekly_solved = 0
-    total_solved = 0
     WEEKLY_GOAL = 10
-
     heatmap = defaultdict(int)
 
     for c in commits:
@@ -56,17 +69,42 @@ def parse_commit_info(commits):
 
         if commit_date == today:
             today_solved += solved
+
         if commit_date >= week_start:
             weekly_solved += solved
 
-        total_solved += solved
         heatmap[str(commit_date)] += solved
 
-    return today_solved, weekly_solved, WEEKLY_GOAL, total_solved, heatmap
+    return today_solved, weekly_solved, WEEKLY_GOAL, heatmap
 
 
 # ---------------------------------------------------------
-# 3) Donut SVG 생성
+# 전체 commit 기반 파싱 (누적 합계 + 카테고리)
+# ---------------------------------------------------------
+def parse_total_info(commits):
+    total_solved = 0
+    cat_count = {"이코테": 0, "프로그래머스": 0, "BOJ": 0}
+
+    for c in commits:
+        msg = c["msg"]
+
+        m = re.search(r"(\d+)문제", msg)
+        solved = int(m.group(1)) if m else 0
+        total_solved += solved
+
+        # 카테고리 분류
+        if "이코테" in msg:
+            cat_count["이코테"] += solved
+        elif "프로그래머스" in msg:
+            cat_count["프로그래머스"] += solved
+        elif "BOJ" in msg or "boj" in msg.lower():
+            cat_count["BOJ"] += solved
+
+    return total_solved, cat_count
+
+
+# ---------------------------------------------------------
+# Donut SVG 생성
 # ---------------------------------------------------------
 def generate_donut(path, value, goal, label):
     percent = 0 if goal == 0 else min(value / goal, 1)
@@ -91,7 +129,7 @@ def generate_donut(path, value, goal, label):
 
 
 # ---------------------------------------------------------
-# 4) Heatmap SVG 생성
+# Heatmap SVG 생성
 # ---------------------------------------------------------
 def generate_heatmap(path, heatmap):
     today = datetime.date.today()
@@ -109,22 +147,17 @@ def generate_heatmap(path, heatmap):
     cols = 10
     rows = 7
 
-    svg_w = cols * (cell + gap)
-    svg_h = rows * (cell + gap)
-
-    svg = [f'<svg width="{svg_w}" height="{svg_h}" xmlns="http://www.w3.org/2000/svg">']
+    svg = [f'<svg width="{cols*(cell+gap)}" height="{rows*(cell+gap)}" xmlns="http://www.w3.org/2000/svg">']
 
     for idx, day in enumerate(dates):
         r = idx % rows
         c = idx // rows
 
         v = heatmap.get(str(day), 0)
-        fill = color(v)
         tooltip = f"{day} — {v} solved"
 
         svg.append(
-            f'<rect x="{c * (cell + gap)}" y="{r * (cell + gap)}" '
-            f'width="{cell}" height="{cell}" rx="3" fill="{fill}">'
+            f'<rect x="{c*(cell+gap)}" y="{r*(cell+gap)}" width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
             f'<title>{tooltip}</title></rect>'
         )
 
@@ -137,15 +170,16 @@ def generate_heatmap(path, heatmap):
 # ---------------------------------------------------------
 # 실행
 # ---------------------------------------------------------
-commits = get_commits()
-today_solved, weekly_solved, weekly_goal, total_solved, heatmap_data = parse_commit_info(commits)
+recent = get_commits_recent()
+all_commits = get_commits_all()
 
-# Donut 생성
+today_solved, weekly_solved, weekly_goal, heatmap_data = parse_recent_info(recent)
+total_solved, cat_count = parse_total_info(all_commits)
+
+# SVG 생성
 generate_donut(os.path.join(ASSETS, "today.svg"), today_solved, 1, "solved")
 generate_donut(os.path.join(ASSETS, "weekly.svg"), weekly_solved, weekly_goal, "solved")
 generate_donut(os.path.join(ASSETS, "total.svg"), total_solved, max(total_solved, 1), "solved")
-
-# Heatmap 생성
 generate_heatmap(os.path.join(ASSETS, "heatmap.svg"), heatmap_data)
 
 # README 업데이트
