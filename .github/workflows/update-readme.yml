@@ -5,12 +5,15 @@ permissions:
 
 on:
   push:
+    branches:
+      - master
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * *"   # 매일 자정 실행
 
 jobs:
   update:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 
