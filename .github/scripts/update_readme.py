@@ -21,7 +21,7 @@ def count_files(path):
 
 
 ikote_count = count_files("src/이코테_자바")
-programmers_lv1_count = count_files("src/프로그래머스_lv1")
+programmers_lv1_count = count_files("src/프로그래머스/lv1")
 boj_count = count_files("src/BOJ") if os.path.exists("src/BOJ") else 0
 
 total_solved = ikote_count + programmers_lv1_count + boj_count
