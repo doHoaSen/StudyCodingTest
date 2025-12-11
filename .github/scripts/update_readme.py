@@ -151,32 +151,35 @@ def generate_heatmap(path, heatmap):
     # 색상 규칙
     def color(v):
         if v == 0:
-            return "#ebf2ff"
+            return "#ebf2ff"    # 0
         if v <= 2:
-            return "#7bb0ff"
+            return "#7bb0ff"    # 1–2
         if v <= 5:
-            return "#4a90ff"
-        return "#0066ff"
+            return "#4a90ff"    # 3–5
+        return "#0066ff"        # 5+
 
     cell, gap, rows, cols = 14, 4, 7, 10
 
     grid_width = cols * (cell + gap)
     grid_height = rows * (cell + gap)
 
-    legend_height = 40
-    top_padding = 25     # 🔥 히트맵 위쪽 여백
+    # 여백 설정
+    top_padding = 35       # 🔥 히트맵이 너무 위로 붙지 않도록 넉넉하게
+    legend_padding = 25
     bottom_padding = 20
 
-    total_width = 260
-    total_height = top_padding + grid_height + legend_height + bottom_padding
+    # 🔥 넉넉한 width — 범례가 절대 안 짤리는 크기
+    total_width = 360
+    total_height = top_padding + grid_height + legend_padding + bottom_padding
 
+    # SVG 시작
     svg = [
-        f'<svg viewBox="0 0 {total_width} {total_height}" '
-        f'width="{total_width}" height="{total_height}" xmlns="http://www.w3.org/2000/svg">'
+        f'<svg width="{total_width}" height="{total_height}" '
+        f'viewBox="0 0 {total_width} {total_height}" xmlns="http://www.w3.org/2000/svg">'
     ]
 
     # -------------------------
-    # 1) Heatmap (위쪽 padding 적용)
+    # 1) 히트맵 (y=top_padding 부터 시작)
     # -------------------------
     for idx, day in enumerate(dates):
         r = idx % rows
@@ -185,8 +188,8 @@ def generate_heatmap(path, heatmap):
         v = heatmap.get(str(day), 0)
         tooltip = f"{day} — {v} solved"
 
-        x = c * (cell + gap)
-        y = top_padding + r * (cell + gap)   # 🔥 y에 padding 추가
+        x = c * (cell + gap) + 45     # 🔥 중앙 정렬을 위한 왼쪽 여백
+        y = top_padding + r * (cell + gap)
 
         svg.append(
             f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
@@ -194,27 +197,30 @@ def generate_heatmap(path, heatmap):
         )
 
     # -------------------------
-    # 2) 범례 (히트맵 아래 여유롭게 배치)
+    # 2) 범례 (히트맵 아래 중앙 정렬)
     # -------------------------
-    legend_y = top_padding + grid_height + 15
-
-    legend = [
+    legend_items = [
         ("0", "#ebf2ff"),
         ("1–2", "#7bb0ff"),
         ("3–5", "#4a90ff"),
         ("5+", "#0066ff"),
     ]
 
-    x_offset = 10
-    for label, col in legend:
+    legend_y = top_padding + grid_height + 18
+    legend_start_x = 40   # 🔥 중앙 가까이로 이동
+
+    x_offset = legend_start_x
+
+    for label, col in legend_items:
         svg.append(f'<rect x="{x_offset}" y="{legend_y}" width="14" height="14" fill="{col}" />')
-        svg.append(f'<text x="{x_offset + 20}" y="{legend_y + 12}" font-size="13">{label}</text>')
+        svg.append(f'<text x="{x_offset + 22}" y="{legend_y + 12}" font-size="13">{label}</text>')
         x_offset += 70
 
     svg.append("</svg>")
 
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(svg))
+
 
 # ---------------------------------------------------------
 # 실행
