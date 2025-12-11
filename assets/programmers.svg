@@ -1,0 +1,12 @@
+
+<svg width="160" height="160" viewBox="0 0 42 42">
+  <circle cx="21" cy="21" r="15.915" fill="#e6f3ff"/>
+  <circle cx="21" cy="21" r="15.915"
+    fill="transparent"
+    stroke="#4ea3ff"
+    stroke-width="4"
+    stroke-dasharray="72.0 28.0"
+    transform="rotate(-90 21 21)"
+  />
+  <text x="50%" y="50%" dy=".3em" text-anchor="middle" font-size="8">36</text>
+</svg>
