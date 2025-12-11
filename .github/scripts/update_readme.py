@@ -163,10 +163,10 @@ def generate_heatmap(path, heatmap):
     grid_width = cols * (cell + gap)
     grid_height = rows * (cell + gap)
 
-    # 전체 SVG 너비를 대시보드 카드와 비슷하게 설정 (약 780px)
-    total_width = 780
+    # 전체 SVG 너비를 대시보드 카드와 맞춤
+    total_width = 780  # README 내 카드 너비 고려
 
-    # 그리드를 중앙 정렬하기 위한 좌측 시작 좌표
+    # 히트맵 중앙 정렬 x 좌표
     grid_start_x = (total_width - grid_width) // 2
 
     # 여백 설정
@@ -174,13 +174,14 @@ def generate_heatmap(path, heatmap):
     legend_padding = 35
     bottom_padding = 25
 
+    # 🔥 svg 전체 높이 계산
     total_height = top_padding + grid_height + legend_padding + bottom_padding
 
-    svg = [f'<svg height="{svg_height}" xmlns="http://www.w3.org/2000/svg">']
-
+    # ❗ width 제거 → GitHub 자동 확대됨, height만 유지
+    svg = [f'<svg height="{total_height}" xmlns="http://www.w3.org/2000/svg">']
 
     # -------------------------
-    # 1) 히트맵 중앙 정렬된 위치에 그림
+    # 1) 히트맵 (60일)
     # -------------------------
     for idx, day in enumerate(dates):
         r = idx % rows
@@ -197,7 +198,7 @@ def generate_heatmap(path, heatmap):
         )
 
     # -------------------------
-    # 2) 범례 (SVG 전체 기준 중앙 정렬)
+    # 2) 범례 (히트맵 아래 가운데 정렬)
     # -------------------------
     legend_items = [
         ("0", "#ebf2ff"),
@@ -221,7 +222,6 @@ def generate_heatmap(path, heatmap):
 
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(svg))
-
 
 # ---------------------------------------------------------
 # 실행
