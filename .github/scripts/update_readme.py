@@ -205,11 +205,16 @@ def generate_heatmap(path, heatmap):
 recent = get_commits_recent()
 all_commits = get_commits_all()
 
-today_solved, weekly_solved, weekly_goal, heatmap_data = parse_recent_info(recent)
+today_solved, weekly_solved, weekly_goal_old, heatmap_data = parse_recent_info(recent)
 total_solved = parse_total_info(all_commits)
 
-generate_donut(os.path.join(ASSETS, "today.svg"), today_solved, 1, "solved")
-generate_donut(os.path.join(ASSETS, "weekly.svg"), weekly_solved, weekly_goal, "solved")
+# ---------- 수정된 목표값 설정 ----------
+TODAY_GOAL = 3
+WEEKLY_GOAL = 10
+# total goal은 total_solved 자체가 goal
+
+generate_donut(os.path.join(ASSETS, "today.svg"), today_solved, TODAY_GOAL, "solved")
+generate_donut(os.path.join(ASSETS, "weekly.svg"), weekly_solved, WEEKLY_GOAL, "solved")
 generate_donut(os.path.join(ASSETS, "total.svg"), total_solved, max(total_solved, 1), "solved")
 generate_heatmap(os.path.join(ASSETS, "heatmap.svg"), heatmap_data)
 
@@ -217,9 +222,11 @@ with open(TEMPLATE, "r", encoding="utf-8") as f:
     txt = f.read()
 
 now_kst = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
+
 txt = txt.replace("{{TODAY_COUNT}}", str(today_solved))
+txt = txt.replace("{{TODAY_GOAL}}", str(TODAY_GOAL))
 txt = txt.replace("{{WEEKLY_COUNT}}", str(weekly_solved))
-txt = txt.replace("{{WEEKLY_GOAL}}", str(weekly_goal))
+txt = txt.replace("{{WEEKLY_GOAL}}", str(WEEKLY_GOAL))
 txt = txt.replace("{{TOTAL_SOLVED}}", str(total_solved))
 txt = txt.replace("{{UPDATED_AT}}", now_kst.strftime("%Y-%m-%d %H:%M"))
 txt = txt.replace("{{USER}}", USER)
@@ -229,3 +236,4 @@ with open(OUTPUT, "w", encoding="utf-8") as f:
     f.write(txt)
 
 print("README updated.")
+

@@ -11,7 +11,7 @@
 
 <td align="center" style="border:none; padding:20px;">
 <h3>🔥 오늘 푼 문제</h3>
-<p>{{TODAY_COUNT}} 문제</p>
+<p>{{TODAY_COUNT}} / {{TODAY_GOAL}} 문제</p>
 <img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/today.svg" width="160"/>
 </td>
 
@@ -32,16 +32,26 @@
 
 <br>
 
----
 
 ## 🔥 최근 60일 Heatmap
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/heatmap.svg" width="420"/>
+  <img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/heatmap.svg" width="420"/>
 </p>
 
-<p align="center"><i>최근 60일 문제 풀이 기록을 시각화한 히트맵입니다.</i></p>
+<div align="center">
 
----
+**문제 풀이량 범례**
+
+| 색상 | 의미 |
+|------|------|
+| 🟦 아주 연함 | 0 |
+| 🟦 밝음 | 1 |
+| 🟦 중간 | 3 |
+| 🟦 진함 | 5 |
+| 🟦 매우 진함 | 10+ |
+
+</div>
+
 
 ⏰ 최근 업데이트: **{{UPDATED_AT}}**
