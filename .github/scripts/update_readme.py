@@ -151,36 +151,25 @@ def generate_heatmap(path, heatmap):
     # 색상 규칙
     def color(v):
         if v == 0:
-            return "#ebf2ff"
+            return "#ebf2ff"    # 0
         if v <= 2:
-            return "#7bb0ff"
+            return "#7bb0ff"    # 1–2
         if v <= 5:
-            return "#4a90ff"
-        return "#0066ff"
+            return "#4a90ff"    # 3–5
+        return "#0066ff"        # 5+
 
-    # 셀 / 간격 / 그리드 크기
+    # 기존 크기 (초기 정상 표시되던 값)
     cell, gap, rows, cols = 14, 4, 7, 10
-    grid_width = cols * (cell + gap)
-    grid_height = rows * (cell + gap)
+    width = cols * (cell + gap)
+    height = rows * (cell + gap)
 
-    # 전체 SVG 너비를 대시보드 카드와 맞춤
-    total_width = 780  # README 내 카드 너비 고려
+    # 범례 공간 포함 → 위에서 정상적으로 보이던 값 유지
+    svg_height = height + 100
 
-    # 히트맵 중앙 정렬 x 좌표
-    grid_start_x = (total_width - grid_width) // 2
-
-    # 여백 설정
-    top_padding = 40
-    legend_padding = 35
-    bottom_padding = 25
-
-    # 🔥 svg 전체 높이 계산
-    total_height = top_padding + grid_height + legend_padding + bottom_padding
-
-    svg = [f'<svg width="{total_width}" height="{total_height}" xmlns="http://www.w3.org/2000/svg">']
+    svg = [f'<svg width="{width}" height="{svg_height}" xmlns="http://www.w3.org/2000/svg">']
 
     # -------------------------
-    # 1) 히트맵 (60일)
+    # 1) Heatmap 그리기
     # -------------------------
     for idx, day in enumerate(dates):
         r = idx % rows
@@ -188,16 +177,14 @@ def generate_heatmap(path, heatmap):
         v = heatmap.get(str(day), 0)
         tooltip = f"{day} — {v} solved"
 
-        x = grid_start_x + c * (cell + gap)
-        y = top_padding + r * (cell + gap)
-
         svg.append(
-            f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
+            f'<rect x="{c*(cell+gap)}" y="{r*(cell+gap)}" '
+            f'width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
             f'<title>{tooltip}</title></rect>'
         )
 
     # -------------------------
-    # 2) 범례 (히트맵 아래 가운데 정렬)
+    # 2) 범례 (가장 안정적으로 보이던 구조 유지)
     # -------------------------
     legend_items = [
         ("0", "#ebf2ff"),
@@ -206,11 +193,8 @@ def generate_heatmap(path, heatmap):
         ("5+", "#0066ff"),
     ]
 
-    legend_total_width = len(legend_items) * 70
-    legend_start_x = (total_width - legend_total_width) // 2
-    legend_y = top_padding + grid_height + 20
-
-    x_offset = legend_start_x
+    legend_y = height + 40
+    x_offset = 0
 
     for label, col in legend_items:
         svg.append(f'<rect x="{x_offset}" y="{legend_y}" width="14" height="14" fill="{col}" />')
@@ -221,6 +205,7 @@ def generate_heatmap(path, heatmap):
 
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(svg))
+
 
 # ---------------------------------------------------------
 # 실행
