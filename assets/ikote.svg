@@ -1,12 +1,10 @@
-
-<svg width="140" height="140">
-  <circle cx="70" cy="70" r="42" stroke="#e6e6e6" stroke-width="10" fill="none"/>
-  <circle cx="70" cy="70" r="42" stroke="#4aa3ff" stroke-width="10"
-    fill="none"
-    stroke-dasharray="263.89378290154264 0.0"
-    transform="rotate(-90 70 70)"
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="45" stroke="#e5e7eb" stroke-width="14" fill="none"/>
+  <circle cx="100" cy="100" r="45" stroke="#4aa3ff" stroke-width="14" fill="none"
+    stroke-dasharray="282.7433388230814 0.0"
+    transform="rotate(-90 100 100)"
     stroke-linecap="round"/>
-
-  <text x="70" y="65" text-anchor="middle" font-size="20" fill="#333">2</text>
-  <text x="70" y="90" text-anchor="middle" font-size="12" fill="#666"></text>
+  <text x="100" y="100" font-size="26" text-anchor="middle" dominant-baseline="middle">2</text>
+  <text x="100" y="135" font-size="14" text-anchor="middle" fill="#555"></text>
 </svg>
