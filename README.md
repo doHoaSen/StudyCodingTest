@@ -3,47 +3,56 @@
 
 ---
 
-## 🟦 주요 통계 대시보드
+## 🟦 주요 통계 한눈에 보기
 
-<table>
+<table align="center">
 <tr>
 
-<td align="center" width="50%">
+<td width="50%" align="center">
 
 ### 🔥 오늘 푼 문제
-<img src="./assets/today.svg" width="180"/>
+**{{TODAY_SOLVED}} 문제**  
+<img src="./assets/today.svg" width="240"/>
 
 </td>
 
-<td align="center" width="50%">
+<td width="50%" align="center">
 
 ### 🎯 이번 주 목표 (10문제)
-<img src="./assets/weekly.svg" width="180"/>
+**{{WEEKLY_PROGRESS}} / 10 문제**  
+<img src="./assets/weekly.svg" width="240"/>
 
 </td>
-</tr>
 
+</tr>
 <tr>
-<td align="center" width="50%">
+
+<td width="50%" align="center">
 
 ### 📚 누적 해결 문제 수
-<img src="./assets/total.svg" width="180"/>
+**총 {{TOTAL_SOLVED}} 문제**  
+<img src="./assets/total.svg" width="240"/>
 
 </td>
 
-<td align="center" width="50%">
+<td width="50%" align="center">
 
-### 📂 카테고리별 해결 비율
-<img src="./assets/categories.svg" width="180"/>
+### 📂 카테고리 별 풀이 비율 (Donut)
+<div align="center">
+<img src="./assets/ikote_donut.svg" width="130"/>
+<img src="./assets/programmers_donut.svg" width="130"/>
+<img src="./assets/boj_donut.svg" width="130"/>
+</div>
 
 </td>
+
 </tr>
-
 </table>
 
 ---
 
-## 📈 문제 풀이 추세 그래프
+## 📈 최근 7일 누적 문제 풀이 변화
+
 <p align="center">
   <img src="./assets/trend.png" width="650"/>
 </p>
@@ -54,9 +63,10 @@
 
 | 날짜 | 카테고리 | 문제명 |
 |------|----------|---------|
-
+{{RECENT_ACTIVITY_TABLE}}
 
 ---
 
-⏰ 마지막 업데이트: 2025-12-11 14:39
+<br>
 
+⏰ **최근 업데이트:** {{LAST_UPDATE}}
