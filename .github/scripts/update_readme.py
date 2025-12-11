@@ -2,9 +2,13 @@ import os
 import re
 import math
 import datetime
+import pytz
 import subprocess
 from collections import defaultdict
 
+# ---------------------------------------------------------
+# 경로 설정
+# ---------------------------------------------------------
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 ASSETS = os.path.join(ROOT, "assets")
 TEMPLATE = os.path.join(ROOT, "template_readme.md")
@@ -16,9 +20,19 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "").split("/")[1]
 if not os.path.exists(ASSETS):
     os.makedirs(ASSETS)
 
+# ---------------------------------------------------------
+# KST 날짜 계산 함수
+# ---------------------------------------------------------
+def today_kst():
+    kst = pytz.timezone("Asia/Seoul")
+    return datetime.datetime.now(kst).date()
+
+def to_kst_date(ts):
+    kst = pytz.timezone("Asia/Seoul")
+    return datetime.datetime.fromtimestamp(ts, kst).date()
 
 # ---------------------------------------------------------
-# 공통 log 파서
+# git log 파싱
 # ---------------------------------------------------------
 def parse_log(out):
     commits = []
@@ -26,10 +40,9 @@ def parse_log(out):
         if "|" not in line:
             continue
         ts, msg = line.split("|", 1)
-        date = datetime.datetime.fromtimestamp(int(ts)).date()
-        commits.append({"date": date, "msg": msg})
+        date_kst = to_kst_date(int(ts))
+        commits.append({"date": date_kst, "msg": msg})
     return commits
-
 
 # ---------------------------------------------------------
 # Commit fetcher
@@ -40,39 +53,37 @@ def get_commits_recent():
     ).decode().strip().split("\n")
     return parse_log(out)
 
-
 def get_commits_all():
     out = subprocess.check_output(
         ["git", "log", "--pretty=%ct|%B"]
     ).decode().strip().split("\n")
     return parse_log(out)
 
-
 # ---------------------------------------------------------
-# 문제 수 추출 함수
+# 문제 수 추출
 # ---------------------------------------------------------
 def extract_solved(msg):
     nums = re.findall(r"(\d+)문제", msg)
     return sum(int(n) for n in nums) if nums else 0
 
-
 # ---------------------------------------------------------
-# 최근(today / weekly / heatmap)
+# 최근(today, weekly, heatmap)
 # ---------------------------------------------------------
 def parse_recent_info(commits):
-    today = datetime.date.today()
+    today = today_kst()
     week_start = today - datetime.timedelta(days=today.weekday())
 
     today_solved = 0
     weekly_solved = 0
     WEEKLY_GOAL = 10
+
     heatmap = defaultdict(int)
 
     for c in commits:
         commit_date = c["date"]
         solved = extract_solved(c["msg"])
 
-        # Heatmap
+        # Heatmap(60일)
         heatmap[str(commit_date)] += solved
 
         if commit_date == today:
@@ -83,9 +94,8 @@ def parse_recent_info(commits):
 
     return today_solved, weekly_solved, WEEKLY_GOAL, heatmap
 
-
 # ---------------------------------------------------------
-# 전체 commit 기반 누적
+# 전체 누적 해결 문제수
 # ---------------------------------------------------------
 def parse_total_info(commits):
     total = 0
@@ -93,17 +103,15 @@ def parse_total_info(commits):
         total += extract_solved(c["msg"])
     return total
 
-
 # ---------------------------------------------------------
-# 도넛 그래프 색상 보간 (0% → 연파랑, 100% → #4aa3ff)
+# Donut 색상 보간
 # ---------------------------------------------------------
 def lerp(a, b, t):
     return int(a + (b - a) * t)
 
-
 def donut_color(percent):
-    start = (220, 236, 255)   # 0% → 매우 연한 파랑 (#dcecff)
-    end = (74, 163, 255)      # 100% → 기존 색 #4aa3ff
+    start = (220, 236, 255)
+    end = (74, 163, 255)
 
     r = lerp(start[0], end[0], percent)
     g = lerp(start[1], end[1], percent)
@@ -111,18 +119,14 @@ def donut_color(percent):
 
     return f"rgb({r},{g},{b})"
 
-
 # ---------------------------------------------------------
 # Donut SVG 생성
 # ---------------------------------------------------------
 def generate_donut(path, value, goal, label):
     percent = 0 if goal == 0 else min(value / goal, 1)
-
     radius = 40
     C = 2 * math.pi * radius
     progress = percent * C
-
-    # 🎨 퍼센트 기반 색상
     stroke_color = donut_color(percent)
 
     svg = f"""<?xml version="1.0" encoding="UTF-8"?>
@@ -140,15 +144,13 @@ def generate_donut(path, value, goal, label):
     with open(path, "w", encoding="utf-8") as f:
         f.write(svg)
 
-
 # ---------------------------------------------------------
-# Heatmap SVG (기존 블루 계열 유지 + 범례)
+# Heatmap SVG
 # ---------------------------------------------------------
 def generate_heatmap(path, heatmap):
-    today = datetime.date.today()
+    today = today_kst()
     dates = [(today - datetime.timedelta(days=i)) for i in range(59, -1, -1)]
 
-    # 색상 규칙
     def color(v):
         if v == 0:
             return "#ebf2ff"
@@ -158,50 +160,26 @@ def generate_heatmap(path, heatmap):
             return "#4a90ff"
         return "#0066ff"
 
-    # 셀 / 간격 / 그리드 크기
     cell, gap, rows, cols = 14, 4, 7, 10
-    grid_width = cols * (cell + gap)
-    grid_height = rows * (cell + gap)
+    width = cols * (cell + gap)
+    height = rows * (cell + gap)
 
-    # 전체 SVG 너비를 대시보드 카드와 맞춤
-    total_width = 780  # README 내 카드 너비 고려
+    svg = [f'<svg width="{width}" height="{height + 60}" xmlns="http://www.w3.org/2000/svg">']
 
-    # 히트맵 중앙 정렬 x 좌표
-    grid_start_x = (total_width - grid_width) // 2
-
-    # 여백 설정
-    top_padding = 40
-    legend_padding = 35
-    bottom_padding = 25
-
-    # 🔥 svg 전체 높이 계산
-    total_height = top_padding + grid_height + legend_padding + bottom_padding
-
-    svg = [
-        f'<svg width="{total_width}" height="{total_height}" '
-        f'viewBox="0 0 {total_width} {total_height}" '
-        f'xmlns="http://www.w3.org/2000/svg">'
-    ]
-    # -------------------------
-    # 1) 히트맵 (60일)
-    # -------------------------
+    # Heatmap
     for idx, day in enumerate(dates):
         r = idx % rows
         c = idx // rows
         v = heatmap.get(str(day), 0)
         tooltip = f"{day} — {v} solved"
 
-        x = grid_start_x + c * (cell + gap)
-        y = top_padding + r * (cell + gap)
-
         svg.append(
-            f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
+            f'<rect x="{c*(cell+gap)}" y="{r*(cell+gap)}" '
+            f'width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
             f'<title>{tooltip}</title></rect>'
         )
 
-    # -------------------------
-    # 2) 범례 (히트맵 아래 가운데 정렬)
-    # -------------------------
+    # Legend
     legend_items = [
         ("0", "#ebf2ff"),
         ("1–2", "#7bb0ff"),
@@ -209,16 +187,13 @@ def generate_heatmap(path, heatmap):
         ("5+", "#0066ff"),
     ]
 
-    legend_total_width = len(legend_items) * 70
-    legend_start_x = (total_width - legend_total_width) // 2
-    legend_y = top_padding + grid_height + 20
-
-    x_offset = legend_start_x
+    legend_y = height + 20
+    x_offset = 0
 
     for label, col in legend_items:
         svg.append(f'<rect x="{x_offset}" y="{legend_y}" width="14" height="14" fill="{col}" />')
-        svg.append(f'<text x="{x_offset + 22}" y="{legend_y + 12}" font-size="14">{label}</text>')
-        x_offset += 70
+        svg.append(f'<text x="{x_offset + 22}" y="{legend_y + 12}" font-size="12">{label}</text>')
+        x_offset += 60
 
     svg.append("</svg>")
 
@@ -231,13 +206,11 @@ def generate_heatmap(path, heatmap):
 recent = get_commits_recent()
 all_commits = get_commits_all()
 
-today_solved, weekly_solved, weekly_goal_old, heatmap_data = parse_recent_info(recent)
+today_solved, weekly_solved, WEEKLY_GOAL, heatmap_data = parse_recent_info(recent)
 total_solved = parse_total_info(all_commits)
 
-# ---------- 수정된 목표값 설정 ----------
 TODAY_GOAL = 3
 WEEKLY_GOAL = 10
-# total goal은 total_solved 자체가 goal
 
 generate_donut(os.path.join(ASSETS, "today.svg"), today_solved, TODAY_GOAL, "solved")
 generate_donut(os.path.join(ASSETS, "weekly.svg"), weekly_solved, WEEKLY_GOAL, "solved")
@@ -247,7 +220,7 @@ generate_heatmap(os.path.join(ASSETS, "heatmap.svg"), heatmap_data)
 with open(TEMPLATE, "r", encoding="utf-8") as f:
     txt = f.read()
 
-now_kst = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
+now_kst = datetime.datetime.now(pytz.timezone("Asia/Seoul"))
 
 txt = txt.replace("{{TODAY_COUNT}}", str(today_solved))
 txt = txt.replace("{{TODAY_GOAL}}", str(TODAY_GOAL))
@@ -262,4 +235,3 @@ with open(OUTPUT, "w", encoding="utf-8") as f:
     f.write(txt)
 
 print("README updated.")
-
