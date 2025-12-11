@@ -22,46 +22,39 @@ if not os.path.exists(ASSETS):
 # ---------------------------------------------------------
 def parse_log(out):
     commits = []
-    buffer = []
     for line in out:
-        line = line.rstrip("\n")
-        if re.match(r"^\d+\|", line):  # 새로운 commit 시작 조건
-            if buffer:
-                commits.append(buffer)
-            buffer = [line]
-        else:
-            buffer.append(line)
-    if buffer:
-        commits.append(buffer)
-
-    parsed = []
-    for block in commits:
-        header = block[0]
-        ts, _ = header.split("|", 1)
-        body = "\n".join(block[1:])  # body 전체 결합
-        parsed.append({
-            "date": datetime.datetime.fromtimestamp(int(ts)).date(),
-            "msg": body
-        })
-    return parsed
+        if "|" not in line:
+            continue
+        ts, msg = line.split("|", 1)
+        date = datetime.datetime.fromtimestamp(int(ts)).date()
+        commits.append({"date": date, "msg": msg})
+    return commits
 
 
 # ---------------------------------------------------------
-# git log - 최근 60일
+# 1) 최근 60일 commit (오늘/이번주/heatmap)
 # ---------------------------------------------------------
 def get_commits_recent():
     cmd = ["git", "log", "--since=60 days ago", "--pretty=%ct|%B"]
-    out = subprocess.check_output(cmd).decode("utf-8").splitlines()
+    out = subprocess.check_output(cmd).decode("utf-8").strip().split("\n")
     return parse_log(out)
 
 
 # ---------------------------------------------------------
-# git log - 전체 기간
+# 2) 전체 commit (누적 총합)
 # ---------------------------------------------------------
 def get_commits_all():
     cmd = ["git", "log", "--pretty=%ct|%B"]
-    out = subprocess.check_output(cmd).decode("utf-8").splitlines()
+    out = subprocess.check_output(cmd).decode("utf-8").strip().split("\n")
     return parse_log(out)
+
+
+# ---------------------------------------------------------
+# 여러 "N문제"를 합산하는 문제 풀이수 계산
+# ---------------------------------------------------------
+def extract_solved(msg):
+    nums = re.findall(r"(\d+)문제", msg)
+    return sum(int(n) for n in nums) if nums else 0
 
 
 # ---------------------------------------------------------
@@ -80,9 +73,14 @@ def parse_recent_info(commits):
         commit_date = c["date"]
         msg = c["msg"]
 
-        # 📌 여러 개의 "N문제" 모두 합산
-        nums = re.findall(r"(\d+)문제", msg)
-        solved = sum(int(n) for n in nums)
+        solved = extract_solved(msg)
+
+        # 📌 Heatmap — solved=0이어도 칸은 표시됨
+        heatmap[str(commit_date)] += solved
+
+        # 📌 "문제 수가 있는 commit"만 문제 풀이로 인정 (이코테 제외 효과)
+        if solved == 0:
+            continue
 
         if commit_date == today:
             today_solved += solved
@@ -90,34 +88,22 @@ def parse_recent_info(commits):
         if commit_date >= week_start:
             weekly_solved += solved
 
-        heatmap[str(commit_date)] += solved
-
     return today_solved, weekly_solved, WEEKLY_GOAL, heatmap
 
 
 # ---------------------------------------------------------
-# 전체 commit 기반 파싱 (누적 합계 + 카테고리)
+# 전체 commit 기반 파싱 (누적 합계)
 # ---------------------------------------------------------
 def parse_total_info(commits):
     total_solved = 0
-    cat_count = {"이코테": 0, "프로그래머스": 0, "BOJ": 0}
 
     for c in commits:
-        msg = c["msg"]
+        solved = extract_solved(c["msg"])
 
-        nums = re.findall(r"(\d+)문제", msg)
-        solved = sum(int(n) for n in nums)
+        # solved=0: 이코테 같은 개념 공부 커밋 → 누적에서 제외
         total_solved += solved
 
-        # 카테고리 분류
-        if "이코테" in msg:
-            cat_count["이코테"] += solved
-        if "프로그래머스" in msg or "programmers" in msg.lower():
-            cat_count["프로그래머스"] += solved
-        if "BOJ" in msg.lower():
-            cat_count["BOJ"] += solved
-
-    return total_solved, cat_count
+    return total_solved
 
 
 # ---------------------------------------------------------
@@ -171,6 +157,7 @@ def generate_heatmap(path, heatmap):
         c = idx // rows
         v = heatmap.get(str(day), 0)
         tooltip = f"{day} — {v} solved"
+
         svg.append(
             f'<rect x="{c*(cell+gap)}" y="{r*(cell+gap)}" width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
             f'<title>{tooltip}</title></rect>'
@@ -189,7 +176,7 @@ recent = get_commits_recent()
 all_commits = get_commits_all()
 
 today_solved, weekly_solved, weekly_goal, heatmap_data = parse_recent_info(recent)
-total_solved, cat_count = parse_total_info(all_commits)
+total_solved = parse_total_info(all_commits)
 
 # SVG 생성
 generate_donut(os.path.join(ASSETS, "today.svg"), today_solved, 1, "solved")
