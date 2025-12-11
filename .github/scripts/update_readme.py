@@ -151,24 +151,37 @@ def generate_heatmap(path, heatmap):
     # 색상 규칙
     def color(v):
         if v == 0:
-            return "#ebf2ff"    # 0
+            return "#ebf2ff"
         if v <= 2:
-            return "#7bb0ff"    # 1–2
+            return "#7bb0ff"
         if v <= 5:
-            return "#4a90ff"    # 3–5
-        return "#0066ff"        # 5+
+            return "#4a90ff"
+        return "#0066ff"
 
+    # 셀 / 간격 / 그리드 크기
     cell, gap, rows, cols = 14, 4, 7, 10
-    width = cols * (cell + gap)
-    height = rows * (cell + gap)
+    grid_width = cols * (cell + gap)
+    grid_height = rows * (cell + gap)
 
-    # 범례 포함해 여유 공간 확보
-    svg_height = height + 100
+    # 전체 SVG 너비를 대시보드 카드와 맞춤
+    total_width = 780  # README 내 카드 너비 고려
 
-    svg = [f'<svg width="{width}" height="{svg_height}" xmlns="http://www.w3.org/2000/svg">']
+    # 히트맵 중앙 정렬 x 좌표
+    grid_start_x = (total_width - grid_width) // 2
+
+    # 여백 설정
+    top_padding = 40
+    legend_padding = 35
+    bottom_padding = 25
+
+    # 🔥 svg 전체 높이 계산
+    total_height = top_padding + grid_height + legend_padding + bottom_padding
+
+    # ❗ width 제거 → GitHub 자동 확대됨, height만 유지
+    svg = [f'<svg height="{total_height}" xmlns="http://www.w3.org/2000/svg">']
 
     # -------------------------
-    # Heatmap
+    # 1) 히트맵 (60일)
     # -------------------------
     for idx, day in enumerate(dates):
         r = idx % rows
@@ -176,29 +189,34 @@ def generate_heatmap(path, heatmap):
         v = heatmap.get(str(day), 0)
         tooltip = f"{day} — {v} solved"
 
+        x = grid_start_x + c * (cell + gap)
+        y = top_padding + r * (cell + gap)
+
         svg.append(
-            f'<rect x="{c*(cell+gap)}" y="{r*(cell+gap)}" '
-            f'width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
+            f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
             f'<title>{tooltip}</title></rect>'
         )
 
     # -------------------------
-    # Legend (그때 잘 보였던 것 그대로)
+    # 2) 범례 (히트맵 아래 가운데 정렬)
     # -------------------------
-    legend = [
+    legend_items = [
         ("0", "#ebf2ff"),
         ("1–2", "#7bb0ff"),
         ("3–5", "#4a90ff"),
         ("5+", "#0066ff"),
     ]
 
-    legend_y = height + 40
-    x_offset = 0
+    legend_total_width = len(legend_items) * 70
+    legend_start_x = (total_width - legend_total_width) // 2
+    legend_y = top_padding + grid_height + 20
 
-    for label, col in legend:
+    x_offset = legend_start_x
+
+    for label, col in legend_items:
         svg.append(f'<rect x="{x_offset}" y="{legend_y}" width="14" height="14" fill="{col}" />')
-        svg.append(f'<text x="{x_offset + 22}" y="{legend_y + 12}" font-size="12">{label}</text>')
-        x_offset += 55
+        svg.append(f'<text x="{x_offset + 22}" y="{legend_y + 12}" font-size="14">{label}</text>')
+        x_offset += 70
 
     svg.append("</svg>")
 
