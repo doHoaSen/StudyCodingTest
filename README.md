@@ -12,7 +12,7 @@
 
 ### 🔥 오늘 푼 문제
 3 문제  
-<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/today.svg?raw=1" width="120"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/master/assets/today.svg?raw=1" width="120"/>
 
 </td>
 
@@ -20,7 +20,7 @@
 
 ### 🎯 이번 주 목표 (10문제)
 10 / 10  
-<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/weekly.svg?raw=1" width="120"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/master/assets/weekly.svg?raw=1" width="120"/>
 
 </td>
 
@@ -28,7 +28,7 @@
 
 ### 📚 누적 해결 문제
 총 36 문제  
-<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/total.svg?raw=1" width="120"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/master/assets/total.svg?raw=1" width="120"/>
 
 </td>
 </tr>
@@ -43,19 +43,19 @@
 <td align="center">
 이코테  
 <br>
-<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/ikote.svg?raw=1" width="120"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/master/assets/ikote.svg?raw=1" width="120"/>
 </td>
 
 <td align="center">
 프로그래머스  
 <br>
-<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/programmers.svg?raw=1" width="120"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/master/assets/programmers.svg?raw=1" width="120"/>
 </td>
 
 <td align="center">
 BOJ  
 <br>
-<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/boj.svg?raw=1" width="120"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/master/assets/boj.svg?raw=1" width="120"/>
 </td>
 </tr>
 </table>
@@ -64,10 +64,10 @@ BOJ
 
 ## 🔥 최근 60일 풀이 Heatmap
 
-<img src="https://github.com/doHoaSen/StudyCodingTest/blob/main/assets/heatmap.svg?raw=1"/>
+<img src="https://github.com/doHoaSen/StudyCodingTest/blob/master/assets/heatmap.svg?raw=1"/>
 
 ---
 
 <br>
 
-⏰ 최근 업데이트: **2025-12-11 16:04**
+⏰ 최근 업데이트: **2025-12-11 16:06**
