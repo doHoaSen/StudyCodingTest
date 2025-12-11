@@ -7,7 +7,7 @@ on:
   push:
     branches: [ "master" ]
   schedule:
-    - cron: "0 */6 * * *"   # 6시간마다 갱신
+    - cron: "0 */12 * * *"   # 12시간마다 갱신
 
 jobs:
   update:
