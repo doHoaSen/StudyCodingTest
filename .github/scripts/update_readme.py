@@ -159,48 +159,66 @@ def generate_heatmap(path, heatmap):
         return "#0066ff"        # 6+
 
     cell, gap, rows, cols = 14, 4, 7, 10
-    width = cols * (cell + gap)
-    height = rows * (cell + gap)
 
-    # 🔥 히트맵 + 범례 공간 넉넉히 확보
-    svg_height = height + 110
+    grid_width = cols * (cell + gap)
+    grid_height = rows * (cell + gap)
 
-    svg = [f'<svg width="{width}" height="{svg_height}" xmlns="http://www.w3.org/2000/svg">']
+    legend_height = 40
+    padding = 20
 
-    # Heatmap 그리기
+    # 🔥 SVG 전체 높이/너비 넉넉하게
+    total_width = 260
+    total_height = grid_height + legend_height + padding
+
+    svg = [
+        f'<svg viewBox="0 0 {total_width} {total_height}" '
+        f'width="{total_width}" height="{total_height}" xmlns="http://www.w3.org/2000/svg">'
+    ]
+
+    # -------------------------
+    # 1) Heatmap 그리기
+    # -------------------------
     for idx, day in enumerate(dates):
         r = idx % rows
         c = idx // rows
+
         v = heatmap.get(str(day), 0)
         tooltip = f"{day} — {v} solved"
 
+        x = c * (cell + gap)
+        y = r * (cell + gap)
+
         svg.append(
-            f'<rect x="{c*(cell+gap)}" y="{r*(cell+gap)}" '
-            f'width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
+            f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
             f'<title>{tooltip}</title></rect>'
         )
 
-    # 🔥 범례를 히트맵 아래에 배치
-    legend_y = height + 20
-    svg.append(f'<g transform="translate(0, {legend_y})">')
-
-    legend = [
+    # -------------------------
+    # 2) 범례 그리기
+    # -------------------------
+    legend_y = grid_height + 20
+    legend_items = [
         ("0", "#ebf2ff"),
         ("1–2", "#7bb0ff"),
         ("3–5", "#4a90ff"),
         ("5+", "#0066ff"),
     ]
 
-    x_offset = 0
-    for label, col in legend:
-        svg.append(f'<rect x="{x_offset}" y="0" width="14" height="14" fill="{col}" />')
-        svg.append(f'<text x="{x_offset + 20}" y="12" font-size="12">{label}</text>')
-        x_offset += 55
+    x_offset = 10
+    for label, col in legend_items:
+        svg.append(
+            f'<rect x="{x_offset}" y="{legend_y}" width="14" height="14" fill="{col}" />'
+        )
+        svg.append(
+            f'<text x="{x_offset + 20}" y="{legend_y + 12}" font-size="13">{label}</text>'
+        )
+        x_offset += 70  # 넉넉하게 간격 확보
 
-    svg.append("</g></svg>")
+    svg.append("</svg>")
 
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(svg))
+
 
 # ---------------------------------------------------------
 # 실행
