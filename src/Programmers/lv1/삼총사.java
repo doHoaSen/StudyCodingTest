@@ -1,4 +1,4 @@
-package Programmers.lv1;
+package programmers.lv1;
 
 public class 삼총사 {
     // 삼중반복문 -> O(n^3)

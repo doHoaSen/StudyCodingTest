@@ -1,4 +1,4 @@
-package Programmers.lv1;
+package programmers.lv1;
 
 public class 숫자문자열과_영단어 {
     class Solution {

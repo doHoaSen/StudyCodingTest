@@ -1,4 +1,4 @@
-package Programmers.lv1;
+package programmers.lv1;
 import java.util.*;
 
 public class 크레인_인형뽑기_게임 {

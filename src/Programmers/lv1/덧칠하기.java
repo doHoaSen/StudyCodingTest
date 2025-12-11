@@ -1,4 +1,4 @@
-package Programmers.lv1;
+package programmers.lv1;
 
 public class 덧칠하기 {
     class Solution {

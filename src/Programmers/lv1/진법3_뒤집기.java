@@ -1,4 +1,4 @@
-package Programmers.lv1;
+package programmers.lv1;
 
 public class 진법3_뒤집기 {
     public int solution(int n) {

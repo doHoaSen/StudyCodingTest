@@ -1,4 +1,4 @@
-package Programmers.lv1;
+package programmers.lv1;
 import java.util.*;
 
 public class 명예의전당1 {

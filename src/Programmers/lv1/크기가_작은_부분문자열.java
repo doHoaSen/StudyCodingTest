@@ -1,4 +1,4 @@
-package Programmers.lv1;
+package programmers.lv1;
 
 public class 크기가_작은_부분문자열 {
     public int solution(String t, String p){

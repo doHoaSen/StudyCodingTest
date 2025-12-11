@@ -1,4 +1,4 @@
-package Programmers.lv1;
+package programmers.lv1;
 import java.util.*;
 
 public class 문자열_내마음대로_정렬하기 {
