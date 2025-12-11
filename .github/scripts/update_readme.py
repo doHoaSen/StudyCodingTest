@@ -3,152 +3,135 @@ import re
 import json
 import datetime
 import pytz
-import matplotlib.pyplot as plt
-import numpy as np
 
-# 폰트 설정 (GitHub Actions용)
-plt.rcParams["font.family"] = "DejaVu Sans"
+# Repo name 자동 감지
+REPO = os.popen("git config --get remote.origin.url").read().strip()
+REPO = REPO.replace("https://github.com/", "").replace(".git", "")
 
 ROOT = "."
-TEMPLATE_FILE = "template_readme.md"
-OUTPUT_README = "README.md"
-
-ASSETS = os.path.join(ROOT, "assets")
+ASSETS = "assets"
 os.makedirs(ASSETS, exist_ok=True)
 
-# -------------------------
-# 유틸 함수
-# -------------------------
-def count_java_files(path):
+TEMPLATE = "template_readme.md"
+README = "README.md"
+HISTORY = "solve_history.json"
+
+# ------------ Java file counter ------------
+def count_java(path):
     if not os.path.exists(path):
         return 0
-    return sum(f.endswith(".java") for _, _, fs in os.walk(path) for f in fs)
+    return sum(
+        1 for _, _, files in os.walk(path) for f in files if f.endswith(".java")
+    )
 
-def parse_commits(days=60):
-    """최근 N일간 커밋 수집 → 날짜별 문제 푼 수 계산"""
-    log = os.popen(
-        f'git log --since="{days} days ago" --pretty=format:"%ad|||%s" --date=short'
-    ).read()
-
-    stats = {}
-    for line in log.split("\n"):
-        if "프로그래머스" not in line and "이코테" not in line and "BOJ" not in line:
-            continue
-
-        try:
-            date, msg = line.split("|||")
-        except:
-            continue
-
-        # commit message: "251210 프로그래머스: lv.1 3문제"
-        m = re.search(r"(\d+)문제", msg)
-        solved = int(m.group(1)) if m else 1
-
-        stats[date] = stats.get(date, 0) + solved
-
-    return stats
-
-
-# -------------------------
-# 문제 카운트
-# -------------------------
-ikote = count_java_files("src/이코테_자바")
-programmers = count_java_files("src/programmers")
-boj = count_java_files("src/BOJ")
-
+ikote = count_java("src/이코테_자바")
+programmers = count_java("src/programmers")
+boj = count_java("src/BOJ") if os.path.exists("src/BOJ") else 0
 total = ikote + programmers + boj
 
-# -------------------------
-# 오늘 날짜 / 주간 통계
-# -------------------------
-today = datetime.datetime.now(pytz.timezone("Asia/Seoul")).strftime("%Y-%m-%d")
-week_log = parse_commits(7)
-today_solved = week_log.get(today, 0)
-weekly_solved = sum(week_log.values())
+# ------------ Today / weekly solved (file based) ------------
+today_str = datetime.datetime.now(pytz.timezone("Asia/Seoul")).strftime("%Y-%m-%d")
 
-# -------------------------
-# Heatmap 데이터
-# -------------------------
-heatmap_data = parse_commits(60)
+def get_git_changes(since):
+    """Count modified Java files since given date."""
+    log = os.popen(f'git log --since="{since}" --name-only --pretty=format:').read()
+    return sum(1 for line in log.split("\n") if line.strip().endswith(".java"))
 
-# -------------------------
-# Donut Chart 생성
-# -------------------------
-def donut(value, label, filename, color="#4DB6E8"):
-    fig, ax = plt.subplots(figsize=(3, 3))
-    ax.pie(
-        [value, 1],
-        radius=1,
-        colors=[color, "#E8F4FB"],
-        startangle=90,
-        counterclock=False,
-        wedgeprops={"width": 0.35},
-    )
-    ax.text(0, 0, label, ha="center", va="center", fontsize=16)
-    ax.set(aspect="equal")
-    plt.savefig(os.path.join(ASSETS, filename), transparent=True)
-    plt.close()
+today_solved = get_git_changes(today_str)
+weekly_solved = get_git_changes("7 days ago")
+if weekly_solved > 10:
+    weekly_solved = 10
 
+# ------------ Save history for heatmap ------------
+today_date = datetime.date.today().isoformat()
 
-donut(today_solved, str(today_solved), "today.svg")
-donut(weekly_solved, str(weekly_solved), "weekly.svg")
-donut(total, str(total), "total.svg")
-donut(total, "전체", "category_total.svg")
+if os.path.exists(HISTORY):
+    history = json.load(open(HISTORY, "r", encoding="utf-8"))
+else:
+    history = {}
 
-donut(ikote, str(ikote), "category_ikote.svg")
-donut(programmers, str(programmers), "category_programmers.svg")
-donut(boj, str(boj), "category_boj.svg")
+history[today_date] = total
+json.dump(history, open(HISTORY, "w", encoding="utf-8"), indent=2)
 
-# -------------------------
-# Heatmap 생성
-# -------------------------
-def generate_heatmap(data, filename):
-    dates = []
-    values = []
+# ------------ Donut Chart Generator ------------
+def donut_svg(value, total):
+    percent = 0 if total == 0 else (value / total) * 100
+    dash = f"{percent} {100 - percent}"
 
+    return f'''
+<svg width="160" height="160" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="18" cy="18" r="15.9155"
+      fill="none" stroke="#e6e6e6" stroke-width="3"/>
+  <circle cx="18" cy="18" r="15.9155"
+      fill="none" stroke="#4ea3ff" stroke-width="3"
+      stroke-dasharray="{dash}" stroke-linecap="round"
+      transform="rotate(-90 18 18)"/>
+
+  <text x="18" y="18" font-size="7" fill="#222"
+        text-anchor="middle" dominant-baseline="central"
+        font-family="DejaVu Sans">{value}</text>
+
+  <text x="18" y="23" font-size="3.5" fill="#666"
+        text-anchor="middle" font-family="DejaVu Sans">
+      solved
+  </text>
+</svg>
+'''
+
+# Save donut SVGs
+open(f"{ASSETS}/today.svg", "w").write(donut_svg(today_solved, 10))
+open(f"{ASSETS}/weekly.svg", "w").write(donut_svg(weekly_solved, 10))
+open(f"{ASSETS}/total.svg", "w").write(donut_svg(total, 500))
+open(f"{ASSETS}/category_total.svg", "w").write(donut_svg(total, total or 1))
+open(f"{ASSETS}/ikote.svg", "w").write(donut_svg(ikote, total or 1))
+open(f"{ASSETS}/programmers.svg", "w").write(donut_svg(programmers, total or 1))
+open(f"{ASSETS}/boj.svg", "w").write(donut_svg(boj, total or 1))
+
+# ------------ Heatmap SVG ------------
+def heatmap_svg(history):
+    """Generate 60-day heatmap like GitHub style."""
     today = datetime.date.today()
-    for i in range(60):
-        d = today - datetime.timedelta(days=i)
-        ds = d.strftime("%Y-%m-%d")
-        dates.append(d)
-        values.append(data.get(ds, 0))
+    days = [today - datetime.timedelta(days=i) for i in range(59, -1, -1)]
 
-    dates = dates[::-1]
-    values = values[::-1]
+    # Normalize values
+    vals = [history.get(d.isoformat(), 0) for d in days]
+    maxv = max(vals) if max(vals) > 0 else 1
 
-    fig, ax = plt.subplots(figsize=(12, 2))
-    vmax = max(values) if max(values) > 0 else 1
+    # Color scale
+    def color(v):
+        level = int((v / maxv) * 4)
+        colors = ["#ebedf0", "#c6e48b", "#7bc96f", "#239a3b", "#196127"]
+        return colors[level]
 
-    cmap = plt.cm.get_cmap("Blues")
-    colors = [cmap(v / vmax) for v in values]
+    svg = '<svg width="700" height="120" xmlns="http://www.w3.org/2000/svg">'
+    x = 10
+    y = 20
+    for i, day in enumerate(days):
+        v = vals[i]
+        svg += f'<rect x="{x}" y="{y}" width="10" height="10" fill="{color(v)}"/>'
+        x += 12
+    svg += "</svg>"
+    return svg
 
-    ax.bar(range(60), [1]*60, color=colors, width=1.0)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.set_xlim(0, 60)
+open(f"{ASSETS}/heatmap.svg", "w").write(heatmap_svg(history))
 
-    plt.savefig(os.path.join(ASSETS, filename), transparent=True)
-    plt.close()
+# ------------ Build README ------------
+last_update = datetime.datetime.now(
+    pytz.timezone("Asia/Seoul")
+).strftime("%Y-%m-%d %H:%M")
 
-
-generate_heatmap(heatmap_data, "heatmap.svg")
-
-# -------------------------
-# README 생성
-# -------------------------
-with open(TEMPLATE_FILE, "r", encoding="utf-8") as f:
-    template = f.read()
-
-now = datetime.datetime.now(pytz.timezone("Asia/Seoul")).strftime("%Y-%m-%d %H:%M")
-
+readme = open(TEMPLATE, "r", encoding="utf-8").read()
 readme = (
-    template.replace("{{TODAY_SOLVED}}", str(today_solved))
+    readme.replace("{{TODAY_SOLVED}}", str(today_solved))
     .replace("{{WEEKLY_SOLVED}}", str(weekly_solved))
     .replace("{{TOTAL_SOLVED}}", str(total))
-    .replace("{{LAST_UPDATE}}", now)
+    .replace("{{IKOTE_COUNT}}", str(ikote))
+    .replace("{{PROGRAMMERS_COUNT}}", str(programmers))
+    .replace("{{BOJ_COUNT}}", str(boj))
+    .replace("{{LAST_UPDATE}}", last_update)
+    .replace("{{REPO}}", REPO)
 )
 
-with open(OUTPUT_README, "w", encoding="utf-8") as f:
-    f.write(readme)
+open(README, "w", encoding="utf-8").write(readme)
 
-print("README updated successfully.")
+print("README updated.")
