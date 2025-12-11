@@ -36,9 +36,9 @@
 ## 🔥 최근 60일 Heatmap
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/heatmap.svg" width="780"/>
+  <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/heatmap.svg"/>
 </p>
 
 
 
-⏰ 최근 업데이트: **2025-12-11 23:30**
+⏰ 최근 업데이트: **2025-12-11 23:31**
