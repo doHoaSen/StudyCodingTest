@@ -1,6 +1,13 @@
 
-<svg width="260" height="40">
-  <rect width="240" height="10" x="10" y="18" rx="5" fill="#E6ECF5"/>
-  <rect width="0" height="10" x="10" y="18" rx="5" fill="#8AB6F9"/>
-  <text x="130" y="15" font-size="12" text-anchor="middle">0 / 10 (0%)</text>
-</svg>
+    <svg width="140" height="140" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="60" r="45" fill="none" stroke="#e6e6e6" stroke-width="10"/>
+        <circle cx="60" cy="60" r="45" fill="none"
+            stroke="#4C9CFF" stroke-width="10"
+            stroke-dasharray="0.0 282.7433388230814"
+            stroke-linecap="round"
+            transform="rotate(-90 60 60)"
+        />
+        <text x="60" y="60" text-anchor="middle" font-size="20" fill="#4C9CFF" dy="6">0%</text>
+        <text x="60" y="90" text-anchor="middle" font-size="12" fill="#555">주간 목표</text>
+    </svg>
+    
