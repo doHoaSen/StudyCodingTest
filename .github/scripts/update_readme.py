@@ -176,10 +176,8 @@ def generate_heatmap(path, heatmap):
 
     total_height = top_padding + grid_height + legend_padding + bottom_padding
 
-    svg = [
-        f'<svg height="{total_height}" '
-        xmlns="http://www.w3.org/2000/svg">'
-    ]
+    svg = [f'<svg height="{svg_height}" xmlns="http://www.w3.org/2000/svg">']
+
 
     # -------------------------
     # 1) 히트맵 중앙 정렬된 위치에 그림
