@@ -39,19 +39,6 @@
   <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/heatmap.svg" width="420"/>
 </p>
 
-<div align="center">
-
-**문제 풀이량 범례**
-
-| 색상 | 의미 |
-|------|------|
-| 🟦 아주 연함 | 0 |
-| 🟦 밝음 | 1 |
-| 🟦 중간 | 3 |
-| 🟦 진함 | 5 |
-| 🟦 매우 진함 | 10+ |
-
-</div>
 
 
-⏰ 최근 업데이트: **2025-12-11 23:14**
+⏰ 최근 업데이트: **2025-12-11 23:16**
