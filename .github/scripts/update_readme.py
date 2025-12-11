@@ -1,39 +1,34 @@
-import os
-import re
-import math
-import datetime
-import subprocess
+import os, re, math, datetime, subprocess
 from collections import defaultdict
 
-# -------------------------
-# 경로 설정 (안정 버전)
-# -------------------------
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 ASSETS = os.path.join(ROOT, "assets")
 TEMPLATE = os.path.join(ROOT, "template_readme.md")
 OUTPUT = os.path.join(ROOT, "README.md")
 
-if not os.path.exists(ASSETS):
-    os.makedirs(ASSETS)
+USER = os.environ.get("GITHUB_REPOSITORY", "").split("/")[0]
+REPO = os.environ.get("GITHUB_REPOSITORY", "").split("/")[1]
 
-# -------------------------
-# Commit 로그 수집
-# -------------------------
+os.makedirs(ASSETS, exist_ok=True)
+
+# ------------------------------------------------------
+# 1) Git commit log 가져오기
+# ------------------------------------------------------
 def get_commits():
     cmd = ["git", "log", "--since=60 days ago", "--pretty=%ad|%s", "--date=short"]
     lines = subprocess.check_output(cmd).decode().strip().split("\n")
-
     commits = []
-    for line in lines:
-        if "|" not in line:
+    for ln in lines:
+        if "|" not in ln:
             continue
-        d, msg = line.split("|", 1)
-        commits.append({"date": d, "msg": msg.strip()})
+        date, msg = ln.split("|", 1)
+        commits.append({"date": date, "msg": msg.strip()})
     return commits
 
-# -------------------------
-# Commit 파싱
-# -------------------------
+
+# ------------------------------------------------------
+# 2) commit 정보 파싱
+# ------------------------------------------------------
 def parse_commit_info(commits):
     today = datetime.date.today()
     week_start = today - datetime.timedelta(days=today.weekday())
@@ -43,73 +38,69 @@ def parse_commit_info(commits):
     total_solved = 0
     WEEKLY_GOAL = 10
 
-    cat = {"이코테": 0, "프로그래머스": 0, "BOJ": 0}
-    heatmap = defaultdict(int)
+    category = {"이코테": 0, "프로그래머스": 0, "BOJ": 0}
+    heat = defaultdict(int)
 
     for c in commits:
+        git_date = datetime.datetime.strptime(c["date"], "%Y-%m-%d").date()
         msg = c["msg"]
 
-        # 날짜 파싱 YYMMDD
-        m = re.match(r"(\d{6})", msg)
-        if not m:
-            continue
-
-        commit_date = datetime.datetime.strptime(m.group(1), "%y%m%d").date()
-
-        solved_match = re.search(r"(\d+)문제", msg)
-        solved = int(solved_match.group(1)) if solved_match else 0
-
-        # 날짜별 누적
-        if commit_date == today:
-            today_solved += solved
-
-        if commit_date >= week_start:
-            weekly_solved += solved
+        m = re.search(r"(\d+)문제", msg)
+        solved = int(m.group(1)) if m else 0
 
         total_solved += solved
-        heatmap[str(commit_date)] += solved
 
-        # 카테고리
+        if git_date == today:
+            today_solved += solved
+
+        if git_date >= week_start:
+            weekly_solved += solved
+
         if "이코테" in msg:
-            cat["이코테"] += solved
-        if "프로그래머스" in msg:
-            cat["프로그래머스"] += solved
-        if "BOJ" in msg or "boj" in msg.lower():
-            cat["BOJ"] += solved
+            category["이코테"] += solved
+        elif "프로그래머스" in msg:
+            category["프로그래머스"] += solved
+        elif "BOJ" in msg or "boj" in msg.lower():
+            category["BOJ"] += solved
 
-    return today_solved, weekly_solved, WEEKLY_GOAL, total_solved, cat, heatmap
+        heat[str(git_date)] += solved
 
-# -------------------------
-# Donut 그래프 생성
-# -------------------------
+    return today_solved, weekly_solved, WEEKLY_GOAL, total_solved, category, heat
+
+
+# ------------------------------------------------------
+# 3) Donut SVG 생성
+# ------------------------------------------------------
 def generate_donut(path, value, goal, label):
-    percent = (value / goal) if goal else 0
-    percent = min(percent, 1)
-
-    radius = 40
+    percent = 0 if goal == 0 else min(value / goal, 1)
+    radius = 42
     C = 2 * math.pi * radius
-    progress = C * percent
+    progress = percent * C
 
     svg = f"""
 <svg width="140" height="140">
-  <circle cx="70" cy="70" r="{radius}" stroke="#e5e7eb" stroke-width="12" fill="none"/>
-  <circle cx="70" cy="70" r="{radius}" stroke="#4aa3ff" stroke-width="12"
-    fill="none" stroke-dasharray="{progress} {C-progress}"
-    transform="rotate(-90 70 70)" stroke-linecap="round"/>
-  <text x="70" y="70" font-size="20" text-anchor="middle" dominant-baseline="middle">{value}</text>
-  <text x="70" y="95" font-size="12" text-anchor="middle">{label}</text>
+  <circle cx="70" cy="70" r="{radius}" stroke="#e6e6e6" stroke-width="10" fill="none"/>
+  <circle cx="70" cy="70" r="{radius}" stroke="#4aa3ff" stroke-width="10"
+    fill="none"
+    stroke-dasharray="{progress} {C-progress}"
+    transform="rotate(-90 70 70)"
+    stroke-linecap="round"/>
+
+  <text x="70" y="65" text-anchor="middle" font-size="20" fill="#333">{value}</text>
+  <text x="70" y="90" text-anchor="middle" font-size="12" fill="#666">{label}</text>
 </svg>
 """
     with open(path, "w", encoding="utf-8") as f:
         f.write(svg)
 
-# -------------------------
-# Heatmap 생성
-# -------------------------
-def generate_heatmap(path, heatmap):
+
+# ------------------------------------------------------
+# 4) Heatmap SVG 생성
+# ------------------------------------------------------
+def generate_heatmap(path, heat):
     today = datetime.date.today()
     dates = [(today - datetime.timedelta(days=i)) for i in range(59, -1, -1)]
-    max_val = max(heatmap.values()) if heatmap else 1
+    maxv = max(heat.values()) if heat else 1
 
     def color(v):
         if v == 0: return "#ebedf0"
@@ -123,27 +114,30 @@ def generate_heatmap(path, heatmap):
     rows = 7
     cols = math.ceil(len(dates) / rows)
 
-    svg_w = cols * (cell + gap)
-    svg_h = rows * (cell + gap)
+    svg_w = cols * (cell + gap) + 20
+    svg_h = rows * (cell + gap) + 20
 
     svg = f'<svg width="{svg_w}" height="{svg_h}">'
 
-    for i, d in enumerate(dates):
-        r = i % rows
-        c = i // rows
-        val = heatmap.get(str(d), 0)
-        svg += f'<rect x="{c*(cell+gap)}" y="{r*(cell+gap)}" width="{cell}" height="{cell}" fill="{color(val)}" rx="3"/>'
+    for idx, d in enumerate(dates):
+        r = idx % rows
+        c = idx // rows
+        v = heat.get(str(d), 0)
+        x = 10 + c * (cell + gap)
+        y = 10 + r * (cell + gap)
+        svg += f'<rect x="{x}" y="{y}" width="{cell}" height="{cell}" fill="{color(v)}" rx="3"/>'
 
     svg += "</svg>"
 
     with open(path, "w", encoding="utf-8") as f:
         f.write(svg)
 
-# -------------------------
+
+# ------------------------------------------------------
 # 실행
-# -------------------------
+# ------------------------------------------------------
 commits = get_commits()
-today_solved, weekly_solved, weekly_goal, total_solved, cat_count, heatmap_data = parse_commit_info(commits)
+today_solved, weekly_solved, weekly_goal, total_solved, cat_count, heat_data = parse_commit_info(commits)
 
 generate_donut(os.path.join(ASSETS, "today.svg"), today_solved, 1, "solved")
 generate_donut(os.path.join(ASSETS, "weekly.svg"), weekly_solved, weekly_goal, "solved")
@@ -153,17 +147,20 @@ generate_donut(os.path.join(ASSETS, "ikote.svg"), cat_count["이코테"], cat_co
 generate_donut(os.path.join(ASSETS, "programmers.svg"), cat_count["프로그래머스"], cat_count["프로그래머스"] or 1, "")
 generate_donut(os.path.join(ASSETS, "boj.svg"), cat_count["BOJ"], cat_count["BOJ"] or 1, "")
 
-generate_heatmap(os.path.join(ASSETS, "heatmap.svg"), heatmap_data)
+generate_heatmap(os.path.join(ASSETS, "heatmap.svg"), heat_data)
 
-# README 업데이트
 with open(TEMPLATE, "r", encoding="utf-8") as f:
-    t = f.read()
+    txt = f.read()
 
-t = t.replace("{{TODAY_COUNT}}", str(today_solved))
-t = t.replace("{{WEEKLY_COUNT}}", str(weekly_solved))
-t = t.replace("{{WEEKLY_GOAL}}", str(weekly_goal))
-t = t.replace("{{TOTAL_SOLVED}}", str(total_solved))
-t = t.replace("{{UPDATED_AT}}", str(datetime.datetime.now())[:16])
+txt = txt.replace("{{TODAY_COUNT}}", str(today_solved))
+txt = txt.replace("{{WEEKLY_COUNT}}", str(weekly_solved))
+txt = txt.replace("{{WEEKLY_GOAL}}", str(weekly_goal))
+txt = txt.replace("{{TOTAL_SOLVED}}", str(total_solved))
+txt = txt.replace("{{UPDATED_AT}}", str(datetime.datetime.now())[:16])
+txt = txt.replace("{{USER}}", USER)
+txt = txt.replace("{{REPO}}", REPO)
 
 with open(OUTPUT, "w", encoding="utf-8") as f:
-    f.write(t)
+    f.write(txt)
+
+print("README updated.")

@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Ensure assets folder exists
+      - name: Ensure asset dir
         run: mkdir -p assets
 
       - name: Install Python
@@ -34,6 +34,6 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add README.md assets
+          git add README.md assets || true
           git commit -m "Auto-update dashboard" || echo "No changes"
           git push
