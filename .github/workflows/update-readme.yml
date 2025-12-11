@@ -4,7 +4,7 @@ on:
   push:
     branches: ["master"]
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * *" # 매일 09:00 KST 자동 실행
 
 permissions:
   contents: write
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0   # commit 로그 전부 가져오기
+          fetch-depth: 0   # git log 전체 조회 가능하게 함
 
       - name: Ensure assets exists
         run: mkdir -p assets
@@ -35,6 +35,6 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add README.md assets || true
+          git add README.md assets/*.svg
           git commit -m "Auto-update dashboard" || echo "No changes"
           git push
