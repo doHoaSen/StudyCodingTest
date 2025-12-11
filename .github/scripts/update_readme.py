@@ -177,8 +177,8 @@ def generate_heatmap(path, heatmap):
     total_height = top_padding + grid_height + legend_padding + bottom_padding
 
     svg = [
-        f'<svg width="{total_width}" height="{total_height}" '
-        f'viewBox="0 0 {total_width} {total_height}" xmlns="http://www.w3.org/2000/svg">'
+        f'<svg height="{total_height}" '
+        xmlns="http://www.w3.org/2000/svg">'
     ]
 
     # -------------------------
