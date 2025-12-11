@@ -10,21 +10,27 @@
 <tr>
 
 <td style="padding:20px; border:0;">
-<h3>🔥 오늘 푼 문제</h3>
-<p style="margin:4px 0;">3 문제</p>
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/today.svg" width="130"/>
+<h3 align="center">🔥 오늘 푼 문제</h3>
+<div align="center">
+<p style="margin:6px 0;">3 문제</p>
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/today.svg" width="180"/>
+</div>
 </td>
 
 <td style="padding:20px; border:0;">
-<h3>🎯 이번 주 목표</h3>
-<p style="margin:4px 0;">10 / 10</p>
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/weekly.svg" width="130"/>
+<h3 align="center">🎯 이번 주 목표</h3>
+<div align="center">
+<p style="margin:6px 0;">10 문제 / 10 문제</p>
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/weekly.svg" width="180"/>
+</div>
 </td>
 
 <td style="padding:20px; border:0;">
-<h3>📚 누적 해결 문제</h3>
-<p style="margin:4px 0;">총 36 문제</p>
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/total.svg" width="130"/>
+<h3 align="center">📚 누적 해결 문제</h3>
+<div align="center">
+<p style="margin:6px 0;">총 36 문제</p>
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/total.svg" width="180"/>
+</div>
 </td>
 
 </tr>
@@ -38,18 +44,24 @@
 <tr>
 
 <td style="padding:20px; border:0;">
+<div align="center">
 <p><strong>이코테</strong></p>
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/ikote.svg" width="130"/>
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/ikote.svg" width="160"/>
+</div>
 </td>
 
 <td style="padding:20px; border:0;">
+<div align="center">
 <p><strong>프로그래머스</strong></p>
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/programmers.svg" width="130"/>
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/programmers.svg" width="160"/>
+</div>
 </td>
 
 <td style="padding:20px; border:0;">
+<div align="center">
 <p><strong>BOJ</strong></p>
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/boj.svg" width="130"/>
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/boj.svg" width="160"/>
+</div>
 </td>
 
 </tr>
@@ -60,9 +72,9 @@
 ## 🔥 최근 60일 Heatmap
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/heatmap.svg" width="480"/>
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/heatmap.svg" width="420"/>
 </p>
 
 
 
-⏰ 최근 업데이트: **2025-12-11 16:44**
+⏰ 최근 업데이트: **2025-12-11 16:48**
