@@ -16,7 +16,6 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "").split("/")[1]
 if not os.path.exists(ASSETS):
     os.makedirs(ASSETS)
 
-
 # ---------------------------------------------------------
 # 공통 log 파서
 # ---------------------------------------------------------
@@ -39,6 +38,7 @@ def get_commits_recent():
         ["git", "log", "--since=60 days ago", "--pretty=%ct|%B"]
     ).decode().strip().split("\n")
     return parse_log(out)
+
 
 def get_commits_all():
     out = subprocess.check_output(
@@ -97,6 +97,23 @@ def parse_total_info(commits):
 
 
 # ---------------------------------------------------------
+# 도넛 그래프용 색상 그라데이션
+# ---------------------------------------------------------
+def lerp(a, b, t):
+    return int(a + (b - a) * t)
+
+
+def donut_color(percent):
+    start = (188, 220, 255)  # 연한 블루
+    end = (0, 85, 255)       # 진한 블루
+
+    r = lerp(start[0], end[0], percent)
+    g = lerp(start[1], end[1], percent)
+    b = lerp(start[2], end[2], percent)
+    return f"rgb({r},{g},{b})"
+
+
+# ---------------------------------------------------------
 # Donut SVG 생성
 # ---------------------------------------------------------
 def generate_donut(path, value, goal, label):
@@ -105,10 +122,12 @@ def generate_donut(path, value, goal, label):
     C = 2 * math.pi * radius
     progress = percent * C
 
+    stroke_color = donut_color(percent)
+
     svg = f"""<?xml version="1.0" encoding="UTF-8"?>
 <svg width="160" height="160" xmlns="http://www.w3.org/2000/svg">
   <circle cx="80" cy="80" r="{radius}" stroke="#e5e7eb" stroke-width="12" fill="none"/>
-  <circle cx="80" cy="80" r="{radius}" stroke="#4aa3ff" stroke-width="12"
+  <circle cx="80" cy="80" r="{radius}" stroke="{stroke_color}" stroke-width="12"
     fill="none"
     stroke-dasharray="{progress} {C - progress}"
     transform="rotate(-90 80 80)"
@@ -122,23 +141,27 @@ def generate_donut(path, value, goal, label):
 
 
 # ---------------------------------------------------------
-# Heatmap SVG
+# Heatmap SVG (블루 계열 + 범례 추가)
 # ---------------------------------------------------------
 def generate_heatmap(path, heatmap):
     today = datetime.date.today()
     dates = [(today - datetime.timedelta(days=i)) for i in range(59, -1, -1)]
 
+    # 블루 팔레트
     def color(v):
-        if v == 0: return "#ebedf0"
-        if v < 2: return "#c6e48b"
-        if v < 5: return "#7bc96f"
-        if v < 10: return "#239a3b"
-        return "#196127"
+        if v == 0: return "#ebf2ff"
+        if v < 2: return "#c6dbff"
+        if v < 4: return "#7bb0ff"
+        if v < 7: return "#4a90ff"
+        return "#0066ff"
 
     cell, gap, rows, cols = 14, 4, 7, 10
+    width = cols * (cell + gap)
+    height = rows * (cell + gap)
 
-    svg = [f'<svg width="{cols*(cell+gap)}" height="{rows*(cell+gap)}" xmlns="http://www.w3.org/2000/svg">']
+    svg = [f'<svg width="{width}" height="{height + 40}" xmlns="http://www.w3.org/2000/svg">']
 
+    # Grid
     for idx, day in enumerate(dates):
         r = idx % rows
         c = idx // rows
@@ -146,11 +169,28 @@ def generate_heatmap(path, heatmap):
         tooltip = f"{day} — {v} solved"
 
         svg.append(
-            f'<rect x="{c*(cell+gap)}" y="{r*(cell+gap)}" width="{cell}" height="{cell}" rx="3" fill="{color(v)}">'
-            f'<title>{tooltip}</title></rect>'
+            f'<rect x="{c*(cell+gap)}" y="{r*(cell+gap)}" width="{cell}" height="{cell}" '
+            f'rx="3" fill="{color(v)}"><title>{tooltip}</title></rect>'
         )
 
-    svg.append("</svg>")
+    # Legend
+    svg.append('<g transform="translate(0, 110)">')
+
+    legend = [
+        ("0", "#ebf2ff"),
+        ("1", "#c6dbff"),
+        ("3", "#7bb0ff"),
+        ("5", "#4a90ff"),
+        ("10+", "#0066ff"),
+    ]
+
+    x_offset = 0
+    for label, col in legend:
+        svg.append(f'<rect x="{x_offset}" y="0" width="14" height="14" fill="{col}" />')
+        svg.append(f'<text x="{x_offset + 20}" y="12" font-size="12">{label}</text>')
+        x_offset += 55
+
+    svg.append("</g></svg>")
 
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(svg))
