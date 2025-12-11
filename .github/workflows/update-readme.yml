@@ -1,14 +1,13 @@
-name: Update README Stats
+name: Update README Dashboard
 
 permissions:
   contents: write
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 */6 * * *"   # 6시간마다 갱신
 
 jobs:
   update:
@@ -31,5 +30,5 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add README.md solve_history.json assets/*
-          git commit -m "Auto update README" || echo "No changes"
+          git commit -m "Auto update README Dashboard" || echo "No changes"
           git push
