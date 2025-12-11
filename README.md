@@ -1,50 +1,48 @@
-<h1 align="center">📘 StudyCodingTest</h1>
-<p align="center">꾸준한 알고리즘 문제풀이 기록 저장소입니다.</p>
+# 📘 StudyCodingTest
+꾸준한 알고리즘 문제풀이 기록 저장소입니다.
 
 ---
 
-<div align="center">
-
-### 🔥 Today’s Activity
-<img src="https://img.shields.io/badge/Today_Solved-0-orange?style=for-the-badge" />
-
-### 🎯 Weekly Goal (10문제 기준)
-<img src="https://progress-bar.dev/0/?scale=10&width=300&color=blue&suffix=%2F10" />
-
-### 🧮 Total Solved
-<img src="https://img.shields.io/badge/Total_Solved-14-40c463?style=for-the-badge" />
-
-</div>
+## 🔥 오늘의 활동
+**오늘 푼 문제 수: {{TODAY_SOLVED}} 문제**
 
 ---
 
-## 📈 Solved Trend Chart
-> 날짜별 누적 문제 풀이 추세입니다.
-
-<p align="center">
-  <img src="./assets/trend.png" width="600">
-</p>
+## 🎯 주간 목표 (10문제)
+<img src="https://progress-bar.dev/{{WEEKLY_PROGRESS}}/?scale=10&width=300&color=blue&suffix=/10" />
 
 ---
 
-## 📂 Category Breakdown
-
-| Category | Count |
-|---------|-------|
-| 🧊 이코테(Java) | **14** |
-| 🚀 프로그래머스 Lv1 | **0** |
-| 🧩 BOJ | **0** |
+## 📊 누적 해결 문제 수
+<img src="https://progress-bar.dev/{{TOTAL_SOLVED}}/?scale=500&width=300&color=40c463&title=Total" />
 
 ---
 
-## 🕒 Recent Activity (마지막 7일)
+## 📈 문제 풀이 추세 그래프
+> 날짜별 누적 문제 풀이 변화 그래프입니다.
 
-| Date | Category | Problem |
-|------|----------|---------|
-
+<img src="./assets/trend.png" width="600"/>
 
 ---
 
-<p align="right">
-⏰ Last Update: <b>2025-12-11 13:15</b>
-</p>
+## 📂 카테고리별 문제 풀이 현황
+
+| 분류 | 해결 문제 수 |
+|------|--------------|
+| 📘 이코테(Java) | **{{IKOTE_COUNT}}** |
+| 🚀 프로그래머스 | **{{PROGRAMMERS_COUNT}}** |
+| 🟢 BOJ | **{{BOJ_COUNT}}** |
+
+---
+
+## 🕒 최근 7일 활동 내역
+
+| 날짜 | 카테고리 | 문제 |
+|------|----------|------|
+{{RECENT_ACTIVITY_TABLE}}
+
+---
+
+<br>
+
+⏰ **최근 업데이트:** {{LAST_UPDATE}}
