@@ -11,19 +11,19 @@
 
 <td align="center" style="border:none; padding:20px;">
 <h3>🔥 오늘 푼 문제</h3>
-<p>3 문제</p>
+<p>4 문제</p>
 <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/today.svg" width="160"/>
 </td>
 
 <td align="center" style="border:none; padding:20px;">
 <h3>🎯 이번 주 목표</h3>
-<p>8 / 10 문제</p>
+<p>9 / 10 문제</p>
 <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/weekly.svg" width="160"/>
 </td>
 
 <td align="center" style="border:none; padding:20px;">
 <h3>📚 누적 해결 문제</h3>
-<p>총 34 문제</p>
+<p>총 35 문제</p>
 <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/total.svg" width="160"/>
 </td>
 
@@ -40,4 +40,4 @@
 
 <br><br>
 
-⏰ 최근 업데이트: **2025-12-11 18:21**
+⏰ 최근 업데이트: **2025-12-11 22:44**
