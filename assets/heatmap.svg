@@ -37,8 +37,8 @@
 <rect x="90" y="0" width="14" height="14" rx="3" fill="#ebf2ff"><title>2025-11-18 — 0 solved</title></rect>
 <rect x="90" y="18" width="14" height="14" rx="3" fill="#ebf2ff"><title>2025-11-19 — 0 solved</title></rect>
 <rect x="90" y="36" width="14" height="14" rx="3" fill="#ebf2ff"><title>2025-11-20 — 0 solved</title></rect>
-<rect x="90" y="54" width="14" height="14" rx="3" fill="#4a90ff"><title>2025-11-21 — 3 solved</title></rect>
-<rect x="90" y="72" width="14" height="14" rx="3" fill="#4a90ff"><title>2025-11-22 — 3 solved</title></rect>
+<rect x="90" y="54" width="14" height="14" rx="3" fill="#7bb0ff"><title>2025-11-21 — 3 solved</title></rect>
+<rect x="90" y="72" width="14" height="14" rx="3" fill="#7bb0ff"><title>2025-11-22 — 3 solved</title></rect>
 <rect x="90" y="90" width="14" height="14" rx="3" fill="#ebf2ff"><title>2025-11-23 — 0 solved</title></rect>
 <rect x="90" y="108" width="14" height="14" rx="3" fill="#ebf2ff"><title>2025-11-24 — 0 solved</title></rect>
 <rect x="108" y="0" width="14" height="14" rx="3" fill="#ebf2ff"><title>2025-11-25 — 0 solved</title></rect>
@@ -49,22 +49,22 @@
 <rect x="108" y="90" width="14" height="14" rx="3" fill="#ebf2ff"><title>2025-11-30 — 0 solved</title></rect>
 <rect x="108" y="108" width="14" height="14" rx="3" fill="#4a90ff"><title>2025-12-01 — 4 solved</title></rect>
 <rect x="126" y="0" width="14" height="14" rx="3" fill="#ebf2ff"><title>2025-12-02 — 0 solved</title></rect>
-<rect x="126" y="18" width="14" height="14" rx="3" fill="#4a90ff"><title>2025-12-03 — 3 solved</title></rect>
+<rect x="126" y="18" width="14" height="14" rx="3" fill="#7bb0ff"><title>2025-12-03 — 3 solved</title></rect>
 <rect x="126" y="36" width="14" height="14" rx="3" fill="#ebf2ff"><title>2025-12-04 — 0 solved</title></rect>
 <rect x="126" y="54" width="14" height="14" rx="3" fill="#7bb0ff"><title>2025-12-05 — 2 solved</title></rect>
 <rect x="126" y="72" width="14" height="14" rx="3" fill="#ebf2ff"><title>2025-12-06 — 0 solved</title></rect>
 <rect x="126" y="90" width="14" height="14" rx="3" fill="#ebf2ff"><title>2025-12-07 — 0 solved</title></rect>
 <rect x="126" y="108" width="14" height="14" rx="3" fill="#ebf2ff"><title>2025-12-08 — 0 solved</title></rect>
-<rect x="144" y="0" width="14" height="14" rx="3" fill="#4a90ff"><title>2025-12-09 — 3 solved</title></rect>
+<rect x="144" y="0" width="14" height="14" rx="3" fill="#7bb0ff"><title>2025-12-09 — 3 solved</title></rect>
 <rect x="144" y="18" width="14" height="14" rx="3" fill="#4a90ff"><title>2025-12-10 — 4 solved</title></rect>
 <rect x="144" y="36" width="14" height="14" rx="3" fill="#4a90ff"><title>2025-12-11 — 4 solved</title></rect>
-<rect x="144" y="54" width="14" height="14" rx="3" fill="#4a90ff"><title>2025-12-12 — 3 solved</title></rect>
+<rect x="144" y="54" width="14" height="14" rx="3" fill="#7bb0ff"><title>2025-12-12 — 3 solved</title></rect>
 <rect x="0" y="146" width="14" height="14" fill="#ebf2ff" />
 <text x="22" y="158" font-size="12">0</text>
 <rect x="60" y="146" width="14" height="14" fill="#7bb0ff" />
-<text x="82" y="158" font-size="12">1–2</text>
+<text x="82" y="158" font-size="12">1–3 문제</text>
 <rect x="120" y="146" width="14" height="14" fill="#4a90ff" />
-<text x="142" y="158" font-size="12">3–5</text>
+<text x="142" y="158" font-size="12">4–5 문제</text>
 <rect x="180" y="146" width="14" height="14" fill="#0066ff" />
-<text x="202" y="158" font-size="12">5+</text>
+<text x="202" y="158" font-size="12">6+ 문제</text>
 </svg>
