@@ -182,10 +182,10 @@ def generate_heatmap(path, heatmap):
 
     # Legend
     legend_items = [
-        ("0", "#ebf2ff"),
-        ("1–3 문제", "#7bb0ff"),
-        ("4–5 문제", "#4a90ff"),
-        ("6+ 문제", "#0066ff"),
+        ("0문제", "#ebf2ff"),
+        ("1–3", "#7bb0ff"),
+        ("4–5", "#4a90ff"),
+        ("6+", "#0066ff"),
     ]
 
 
