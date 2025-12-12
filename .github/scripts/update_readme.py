@@ -194,9 +194,9 @@ def generate_heatmap(path, heatmap):
     x_offset = 0
 
     for label, col in legend_items:
-        svg.append(f'<rect x="{x_offset}" y="{legend_y}" width="14" height="14" fill="{col}" />')
-        svg.append(f'<text x="{x_offset + 22}" y="{legend_y + 12}" font-size="12">{label}</text>')
-        x_offset += 60
+        svg.append(f'<rect x="{x_offset}" y="{legend_y}" width="12" height="12" fill="{col}" />')
+        svg.append(f'<text x="{x_offset + 18}" y="{legend_y + 10}" font-size="10">{label}</text>')
+        x_offset += 55   # 기존 60 → 55로 압축
 
     svg.append("</svg>")
 
