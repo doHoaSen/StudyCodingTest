@@ -36,7 +36,7 @@
 <br>
 
 
-## 🔥 최근 60일 Heatmap
+## 🔥 최근 60일 Heatmap (문제 수)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/heatmap.svg?t={{UPDATED_AT}}" width = "700"/>
