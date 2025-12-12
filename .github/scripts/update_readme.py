@@ -49,13 +49,13 @@ def parse_log(out):
 # ---------------------------------------------------------
 def get_commits_recent():
     out = subprocess.check_output(
-        ["git", "log", "--since=60 days ago", "--pretty=%ct|%B"]
+        ["git", "log", "--since=60 days ago", "--pretty=%ct|%s"]
     ).decode().strip().split("\n")
     return parse_log(out)
 
 def get_commits_all():
     out = subprocess.check_output(
-        ["git", "log", "--pretty=%ct|%B"]
+        ["git", "log", "--pretty=%ct|%s"]
     ).decode().strip().split("\n")
     return parse_log(out)
 
