@@ -39,7 +39,7 @@
 ## 🔥 최근 60일 Heatmap
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/heatmap.svg?t={{UPDATED_AT}}" width = "780"/>
+  <img src="https://raw.githubusercontent.com/{{USER}}/{{REPO}}/master/assets/heatmap.svg?t={{UPDATED_AT}}" width = "700"/>
 
 </p>
 
