@@ -154,11 +154,12 @@ def generate_heatmap(path, heatmap):
     def color(v):
         if v == 0:
             return "#ebf2ff"
-        if v <= 2:
+        if 1 <= v <= 3:
             return "#7bb0ff"
-        if v <= 5:
+        if 4 <= v <= 5:
             return "#4a90ff"
         return "#0066ff"
+
 
     cell, gap, rows, cols = 14, 4, 7, 10
     width = cols * (cell + gap)
@@ -182,10 +183,12 @@ def generate_heatmap(path, heatmap):
     # Legend
     legend_items = [
         ("0", "#ebf2ff"),
-        ("1–2", "#7bb0ff"),
-        ("3–5", "#4a90ff"),
-        ("5+", "#0066ff"),
+        ("1–3 문제", "#7bb0ff"),
+        ("4–5 문제", "#4a90ff"),
+        ("6+ 문제", "#0066ff"),
     ]
+
+
 
     legend_y = height + 20
     x_offset = 0
