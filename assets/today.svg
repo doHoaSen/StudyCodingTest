@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="160" height="160" xmlns="http://www.w3.org/2000/svg">
   <circle cx="80" cy="80" r="40" stroke="#e5e7eb" stroke-width="12" fill="none"/>
-  <circle cx="80" cy="80" r="40" stroke="rgb(122,187,255)" stroke-width="12"
+  <circle cx="80" cy="80" r="40" stroke="rgb(220,236,255)" stroke-width="12"
     fill="none"
-    stroke-dasharray="167.5516081914556 83.77580409572784"
+    stroke-dasharray="0.0 251.32741228718345"
     transform="rotate(-90 80 80)"
     stroke-linecap="round"/>
-  <text x="80" y="80" font-size="20" text-anchor="middle" dominant-baseline="middle">2</text>
+  <text x="80" y="80" font-size="20" text-anchor="middle" dominant-baseline="middle">0</text>
   <text x="80" y="105" font-size="12" text-anchor="middle">solved</text>
 </svg>
