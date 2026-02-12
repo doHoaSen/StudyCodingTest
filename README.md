@@ -11,22 +11,22 @@
 
 <td align="center" style="border:none; padding:20px;">
 <h3>🔥 오늘 푼 문제</h3>
-<p>0 / 3 문제</p>
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/today.svg?t=2026-02-12 00:48" width="160"/>
+<p>1 / 3 문제</p>
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/today.svg?t=2026-02-12 16:33" width="160"/>
 
 </td>
 
 <td align="center" style="border:none; padding:20px;">
 <h3>🎯 이번 주 목표</h3>
-<p>1 / 10 문제</p>
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/weekly.svg?t=2026-02-12 00:48" width="160"/>
+<p>2 / 10 문제</p>
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/weekly.svg?t=2026-02-12 16:33" width="160"/>
 
 </td>
 
 <td align="center" style="border:none; padding:20px;">
 <h3>📚 누적 해결 문제</h3>
-<p>총 69 문제</p>
-<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/total.svg?t=2026-02-12 00:48" width="160"/>
+<p>총 70 문제</p>
+<img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/total.svg?t=2026-02-12 16:33" width="160"/>
 
 </td>
 
@@ -39,10 +39,10 @@
 ## 🔥 최근 60일 Heatmap (문제 수)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/heatmap.svg?t=2026-02-12 00:48" width = "700"/>
+  <img src="https://raw.githubusercontent.com/doHoaSen/StudyCodingTest/master/assets/heatmap.svg?t=2026-02-12 16:33" width = "700"/>
 
 </p>
 
 
 
-⏰ 최근 업데이트: **2026-02-12 00:48**
+⏰ 최근 업데이트: **2026-02-12 16:33**
