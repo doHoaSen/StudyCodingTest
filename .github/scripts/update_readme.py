@@ -152,12 +152,12 @@ def generate_heatmap(path, heatmap):
 
     def color(v):
         if v == 0:
-            return "#ebf2ff"
-        if 1 <= v <= 3:
-            return "#7bb0ff"
-        if 4 <= v <= 5:
-            return "#4a90ff"
-        return "#0066ff"
+            return "#ebf2ff"      # 0
+        if 1 <= v <= 2:
+            return "#7bb0ff"      # 1–2
+        if 3 <= v <= 4:
+            return "#4a90ff"      # 3–4
+        return "#0066ff"          # 5+
 
     cell, gap, rows, cols = 14, 4, 7, 10
     width = cols * (cell + gap)
@@ -165,6 +165,7 @@ def generate_heatmap(path, heatmap):
 
     svg = [f'<svg width="{width}" height="{height + 60}" xmlns="http://www.w3.org/2000/svg">']
 
+    # Heatmap
     for idx, day in enumerate(dates):
         r = idx % rows
         c = idx // rows
@@ -177,11 +178,12 @@ def generate_heatmap(path, heatmap):
             f'<title>{tooltip}</title></rect>'
         )
 
+    # Legend
     legend_items = [
         ("0", "#ebf2ff"),
-        ("1–3", "#7bb0ff"),
-        ("4–5", "#4a90ff"),
-        ("6+", "#0066ff"),
+        ("1–2", "#7bb0ff"),
+        ("3–4", "#4a90ff"),
+        ("5+", "#0066ff"),
     ]
 
     legend_y = height + 20
