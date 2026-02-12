@@ -21,7 +21,7 @@ if not os.path.exists(ASSETS):
     os.makedirs(ASSETS)
 
 # ---------------------------------------------------------
-# KST 날짜 계산 함수
+# 날짜 계산 (한국 기준)
 # ---------------------------------------------------------
 def today_kst():
     kst = pytz.timezone("Asia/Seoul")
@@ -75,7 +75,7 @@ def parse_recent_info(commits):
 
     today_solved = 0
     weekly_solved = 0
-    WEEKLY_GOAL = 10
+    WEEKLY_GOAL = 5   # ← 수정됨
 
     heatmap = defaultdict(int)
 
@@ -83,7 +83,6 @@ def parse_recent_info(commits):
         commit_date = c["date"]
         solved = extract_solved(c["msg"])
 
-        # Heatmap(60일)
         heatmap[str(commit_date)] += solved
 
         if commit_date == today:
@@ -160,14 +159,12 @@ def generate_heatmap(path, heatmap):
             return "#4a90ff"
         return "#0066ff"
 
-
     cell, gap, rows, cols = 14, 4, 7, 10
     width = cols * (cell + gap)
     height = rows * (cell + gap)
 
     svg = [f'<svg width="{width}" height="{height + 60}" xmlns="http://www.w3.org/2000/svg">']
 
-    # Heatmap
     for idx, day in enumerate(dates):
         r = idx % rows
         c = idx // rows
@@ -180,15 +177,12 @@ def generate_heatmap(path, heatmap):
             f'<title>{tooltip}</title></rect>'
         )
 
-    # Legend
     legend_items = [
         ("0", "#ebf2ff"),
         ("1–3", "#7bb0ff"),
         ("4–5", "#4a90ff"),
         ("6+", "#0066ff"),
     ]
-
-
 
     legend_y = height + 20
     x_offset = 0
@@ -212,8 +206,8 @@ all_commits = get_commits_all()
 today_solved, weekly_solved, WEEKLY_GOAL, heatmap_data = parse_recent_info(recent)
 total_solved = parse_total_info(all_commits)
 
-TODAY_GOAL = 3
-WEEKLY_GOAL = 10
+TODAY_GOAL = 2     # ← 수정됨
+WEEKLY_GOAL = 5    # ← 수정됨
 
 generate_donut(os.path.join(ASSETS, "today.svg"), today_solved, TODAY_GOAL, "solved")
 generate_donut(os.path.join(ASSETS, "weekly.svg"), weekly_solved, WEEKLY_GOAL, "solved")
